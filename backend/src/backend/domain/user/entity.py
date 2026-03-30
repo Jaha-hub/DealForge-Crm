@@ -3,13 +3,14 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from src.backend.domain.shared.value_objects.email.value_object import Email
+from src.backend.domain.shared.value_objects.name.value_object import Name
 
 
 @dataclass
 class User:
     id: uuid.UUID
-    first_name: str
-    last_name: str
+    first_name: Name
+    last_name: Name
     username: str # Username
     email: Email # Email
     password_hash: str # hashed_password
