@@ -4,6 +4,10 @@ from src.backend.domain.shared.value_objects.name.errors import InvalidNameError
 from src.backend.domain.shared.value_objects.name.value_object import Name
 
 
+@pytest.fixture
+def test_name():
+    return Name("test")
+
 @pytest.mark.parametrize(
     "value, expected",
     [
