@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from src.backend.application.repository.user_repo import UserRepository
+from src.backend.application.user.repository import UserRepository
 
 
 class UnitOfWork(Protocol):

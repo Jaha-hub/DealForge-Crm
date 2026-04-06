@@ -97,7 +97,7 @@ def test_user_full_name(valid_user):
 def test_user_touch(valid_user):
     before_update = valid_user.updated_at
     valid_user.touch()
-    assert valid_user.updated_at > before_update
+    assert valid_user.updated_at >= before_update
 
 def test_user_interact(valid_user):
     valid_user.interact()

@@ -20,8 +20,8 @@ class User:
     password_hash: str # hashed_password
     last_interaction: datetime | None = None
     is_active: bool = field(default=True)
-    created_at: datetime = field(default=datetime.now)
-    updated_at: datetime = field(default=datetime.now)
+    created_at: datetime = field(default_factory=datetime.now)
+    updated_at: datetime = field(default_factory=datetime.now)
 
     def full_name(self)-> str:
         """
@@ -49,8 +49,7 @@ class User:
 
         :return:
         """
-        if not self.is_active:
-            raise
+        return self.is_active
 
     @classmethod
     def create(

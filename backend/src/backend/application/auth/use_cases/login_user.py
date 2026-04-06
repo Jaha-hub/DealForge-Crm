@@ -1,7 +1,8 @@
-from src.backend.application.dtos.auth.login_user import LoginUserCommand, LoginUserResult
-from src.backend.application.dtos.uow import UnitOfWork
-from src.backend.application.services.security.hasher import Hasher
-from src.backend.application.services.security.token import TokenService
+from src.backend.application.auth.dtos.login_user import LoginUserCommand, LoginUserResult
+from src.backend.application.auth.errors import AuthUserNotFoundError, InvalidPasswordError, InactiveUserError
+from src.backend.application.shared.interfaces.uow import UnitOfWork
+from src.backend.application.auth.interfaces.security.hasher import Hasher
+from src.backend.application.auth.interfaces.security.token import TokenService
 
 
 class LoginUserUseCase:
@@ -23,13 +24,13 @@ class LoginUserUseCase:
             user = await self.uow.users.get_by_username(cmd.username)
 
             if not user:
-                raise
+                raise AuthUserNotFoundError()
 
             if not self.hasher.verify(cmd.password, user.password_hash):
-                raise
+                raise InvalidPasswordError()
 
             if not user.ensure_active():
-                raise
+                raise InactiveUserError()
 
             access_token = self.tokens.encode({"sub": user.id})
             refresh_token = self.tokens.encode({"sub": user.id, "is_refresh": True})
