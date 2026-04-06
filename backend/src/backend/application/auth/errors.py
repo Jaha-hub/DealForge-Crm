@@ -16,3 +16,10 @@ class InvalidPasswordError(AuthError):
 
 class InactiveUserError(AuthError):
     pass
+
+class WeakPasswordError(AuthError):
+    pass
+
+class SamePasswordError(AuthError):
+    pass
+
