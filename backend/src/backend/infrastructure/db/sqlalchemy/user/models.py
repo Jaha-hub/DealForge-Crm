@@ -1,10 +1,10 @@
 from sqlalchemy import Column, String, DateTime
 
-from src.backend.infrastructure.db.sqlalchemy.core.mixins import UUIDMixin, TimestampMixin
+from src.backend.infrastructure.db.sqlalchemy.core.mixins import UUIDMixin, TimestampMixin, ActiveMixin
 from src.backend.infrastructure.db.sqlalchemy.core.models import Base
 
 
-class UserModel(Base,UUIDMixin,TimestampMixin):
+class UserModel(Base,UUIDMixin,ActiveMixin,TimestampMixin):
     __tablename__ = 'users'
 
     first_name = Column(String(255), nullable=False)
