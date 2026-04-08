@@ -81,3 +81,10 @@ class User:
         )
     def __hash__(self):
         return hash(self.id)
+
+    def change_password(
+            self,
+            new_password: str,
+    ):
+        self.password_hash = new_password
+        self.touch()
