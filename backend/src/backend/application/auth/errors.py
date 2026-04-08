@@ -22,4 +22,3 @@ class WeakPasswordError(AuthError):
 
 class SamePasswordError(AuthError):
     pass
-
