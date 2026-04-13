@@ -1,25 +1,34 @@
-from src.backend.application.auth.dtos.change_password import ChangePasswordCommand
-from src.backend.application.auth.interfaces.security.hasher import Hasher
+from dataclasses import dataclass
+
+from src.backend.application.auth.dtos.refresh_token import RefreshTokenCommand, RefreshTokenResult
+from src.backend.application.auth.errors import InactiveUserError
+from src.backend.application.auth.interfaces.security.token import TokenService
 from src.backend.application.shared.interfaces.uow import UnitOfWork
-from src.backend.domain.user.entity import User
 
 
-class ChangePasswordUseCase:
-    def __init__(
+@dataclass
+class RefreshTokenUseCase:
+    uow: UnitOfWork
+    tokens: TokenService
+
+    async def execute(
             self,
-            uow: UnitOfWork,
-            hasher: Hasher,
-
+            cmd: RefreshTokenCommand,
     ):
-        self._uow = uow
-        self._hasher = hasher
+        async with self.uow as uow:
+            user_id = self.tokens.decode(cmd.refresh_token, True)
 
-    async def execute(self, cmd: ChangePasswordCommand):
-        async with self._uow as uow:
-            user = await uow.find_by_id(cmd.user_id)
+            user = await self.uow.users.get_by_id(user_id)
 
-            if not user:
-                pass
+            if not user.is_active:
+                raise InactiveUserError()
 
-            if not self._hasher.verify(cmd.old_password, user.password_hash):
-                raise
+            access_token = self.tokens.encode(user.id)
+            refresh_token = self.tokens.encode(user.id, True)
+            token_type = self.tokens.get_token_type()
+
+            return RefreshTokenResult(
+                access_token=access_token,
+                refresh_token=refresh_token,
+                token_type=token_type,
+            )
