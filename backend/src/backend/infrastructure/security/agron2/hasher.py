@@ -3,7 +3,7 @@ from passlib.handlers.argon2 import argon2
 from src.backend.application.auth.interfaces.security.hasher import Hasher
 
 
-class Argon2(Hasher):
+class Argon2Hasher(Hasher):
     def hash(self,password:str)-> str:
         return argon2.hash(password)
 
