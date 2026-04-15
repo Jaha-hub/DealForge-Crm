@@ -5,5 +5,3 @@ class DomainError(Exception):
 
 class PermissionDeniedError(DomainError):
     pass
-class UserNotFoundError(DomainError):
-    pass
