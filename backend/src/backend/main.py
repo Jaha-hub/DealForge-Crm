@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.backend.domain.presentation.auth.router import router as auth_router
+from src.backend.presentation.api.v1.auth.router import router as auth_router
 
 
 app = FastAPI(

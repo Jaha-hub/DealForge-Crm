@@ -7,6 +7,7 @@ from src.backend.domain.user.entity import User
 from src.backend.infrastructure.db.sqlalchemy.core.uow import SqlalchemyUnitOfWork
 from src.backend.infrastructure.security.agron2.hasher import Argon2Hasher
 from src.backend.infrastructure.security.jose.token import JWTTokenService
+from src.backend.presentation.api.v1.core.dependencies import get_uow
 
 scheme = HTTPBearer()
 async def get_hasher() -> Argon2Hasher:
@@ -20,9 +21,4 @@ async def get_current_user(
         token: str = Depends(scheme),
         tokens: JWTTokenService = Depends(get_token_service),
         uow: SqlalchemyUnitOfWork = Depends(get_uow)
-)-> User:
-    uc = GetMeUseCase(uow, tokens)
-    return await uc.execute(
-        GetMeCommand(token=token),
-    )
-    return token
+)-> User:pass
