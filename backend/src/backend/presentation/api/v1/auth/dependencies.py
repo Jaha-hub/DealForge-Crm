@@ -1,5 +1,5 @@
 from fastapi.params import Depends
-from fastapi.security import HTTPBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from src.backend.application.auth.dtos.get_me import GetMeCommand
 from src.backend.application.user.usecase.get_me import GetMeUseCase
@@ -18,7 +18,12 @@ async def get_token_service() -> JWTTokenService:
     return JWTTokenService()
 
 async def get_current_user(
-        token: str = Depends(scheme),
-        tokens: JWTTokenService = Depends(get_token_service),
-        uow: SqlalchemyUnitOfWork = Depends(get_uow)
-)-> User:pass
+    token: HTTPAuthorizationCredentials = Depends(scheme),
+    tokens: JWTTokenService = Depends(get_token_service),
+    uow: SqlalchemyUnitOfWork = Depends(get_uow),
+) -> User:
+    uc = GetMeUseCase(uow, tokens)
+    user = await uc.execute(
+        cmd=GetMeCommand(token=token.credentials),
+    )
+    return user

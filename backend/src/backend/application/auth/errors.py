@@ -1,4 +1,4 @@
-from src.backend.application.shared.errors import ApplicationError
+from src.backend.application.shared.errors import ApplicationError, NotAuthorizedError, BadRequestError
 
 
 class AuthError(ApplicationError):
@@ -6,23 +6,24 @@ class AuthError(ApplicationError):
     Базовая ошибка Auth
     """
 
-class AuthUserNotFoundError(AuthError):
+
+class AuthUserNotFoundError(NotAuthorizedError,AuthError):
     """
 
     """
 
-class InvalidPasswordError(AuthError):
+class InvalidPasswordError(NotAuthorizedError,AuthError):
     pass
 
-class InactiveUserError(AuthError):
+class InactiveUserError(NotAuthorizedError,AuthError):
     pass
 
-class WeakPasswordError(AuthError):
+class WeakPasswordError(BadRequestError,AuthError):
     pass
 
-class SamePasswordError(AuthError):
+class SamePasswordError(BadRequestError,AuthError):
     pass
 
 
-class EmailAlreadyExistsError(AuthError):
+class EmailAlreadyExistsError(BadRequestError,AuthError):
     pass

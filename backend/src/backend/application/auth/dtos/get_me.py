@@ -3,6 +3,9 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from src.backend.domain.user.entity import UserRole
+
+
 class GetMeCommand(BaseModel):
     token: str
 
@@ -12,5 +15,6 @@ class GetMeResult(BaseModel):
     last_name: str
     username: str
     email: str
-    last_interaction: datetime
+    last_interaction: datetime | None
     is_active: bool
+    role: UserRole

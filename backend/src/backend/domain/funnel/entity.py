@@ -1,0 +1,54 @@
+from dataclasses import dataclass, field
+from uuid import UUID
+
+from src.backend.domain.funnel.value_objects.win_probability.value_object import WinProbability
+from src.backend.domain.shared.value_objects.hex.value_object import HexCode
+from src.backend.domain.shared.value_objects.name.value_object import Name
+
+
+@dataclass
+class Funnel:
+    id: UUID
+    name: Name
+    is_deleted: bool = field(default=False)
+
+    @classmethod
+    def create(
+            cls,
+            id: UUID,
+            name: str,
+    ):
+        return cls(
+            id=id,
+            name=Name(name),
+        )
+
+    def delete(self):
+        self.is_deleted = True
+
+@dataclass
+class FunnelStage:
+    id: UUID
+    funnel_id: UUID
+    name: Name
+    win_probability: WinProbability
+    hex: HexCode = field(default_factory=HexCode("#6366F1"))
+    order: int = field(default=0)
+    @classmethod
+    def create(
+            cls,
+            id: UUID,
+            funnel_id: UUID,
+            name: str,
+            win_probability: int,
+            hex: str,
+            order: int,
+    ):
+        return cls(
+            id=id,
+            funnel_id=funnel_id,
+            name=Name(name),
+            win_probability=WinProbability(win_probability),
+            hex=HexCode(hex),
+            order=order,
+        )

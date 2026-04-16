@@ -12,19 +12,19 @@ class RefreshTokenUseCase:
     tokens: TokenService
 
     async def execute(
-            self,
-            cmd: RefreshTokenCommand,
+        self,
+        cmd: RefreshTokenCommand,
     ):
-        async with self.uow as uow:
-            user_id = self.tokens.decode(cmd.refresh_token, True)
+        async with self.uow:
+            user_id = self.tokens.decode(cmd.refresh_token, is_refresh=True)
 
             user = await self.uow.users.get_by_id(user_id)
 
             if not user.is_active:
-                raise InactiveUserError()
+                raise InactiveUserError("User is not active")
 
             access_token = self.tokens.encode(user.id)
-            refresh_token = self.tokens.encode(user.id, True)
+            refresh_token = self.tokens.encode(user.id, is_refresh=True)
             token_type = self.tokens.get_token_type()
 
             return RefreshTokenResult(

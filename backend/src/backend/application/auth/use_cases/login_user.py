@@ -27,13 +27,13 @@ class LoginUserUseCase:
                 raise AuthUserNotFoundError()
 
             if not self.hasher.verify(cmd.password, user.password_hash):
-                raise InvalidPasswordError()
+                raise InvalidPasswordError("Invalid password or username")
 
             if not user.ensure_active():
-                raise InactiveUserError()
+                raise InactiveUserError("User is inactive")
 
-            access_token = self.tokens.encode({"sub": user.id})
-            refresh_token = self.tokens.encode({"sub": user.id, "is_refresh": True})
+            access_token = self.tokens.encode(user.id)
+            refresh_token = self.tokens.encode(user.id,True)
             token_type = self.tokens.get_token_type()
 
             return LoginUserResult(

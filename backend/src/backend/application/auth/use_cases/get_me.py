@@ -23,14 +23,4 @@ class GetMeUseCase:
 
              if not user:
                  raise InactiveUserError()
-
-             # return GetMeResult(
-             #     id=user.id,
-             #     first_name=user.first_name.value,
-             #     last_name=user.last_name.value,
-             #     email=user.email.value,
-             #     username=user.username.value,
-             #     is_active=user.is_active,
-             #     last_interaction=user.last_interaction,
-             # )
              return user
