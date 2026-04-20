@@ -13,7 +13,8 @@ from src.backend.application.auth.use_cases.refresh_token import RefreshTokenUse
 from src.backend.application.auth.use_cases.update_me import UpdateMeUseCase
 from src.backend.domain.user.entity import User
 from src.backend.infrastructure.db.sqlalchemy.core.uow import SqlalchemyUnitOfWork
-from src.backend.presentation.api.v1.auth.dependencies import get_hasher, get_token_service, get_current_user
+from src.backend.presentation.api.v1.auth.dependencies import get_hasher, get_token_service, get_current_user, \
+    get_password_spec, get_password_diff_spec
 from src.backend.infrastructure.security.agron2.hasher import Argon2Hasher
 from src.backend.infrastructure.security.jose.token import JWTTokenService
 from src.backend.presentation.api.v1.core.dependencies import get_uow

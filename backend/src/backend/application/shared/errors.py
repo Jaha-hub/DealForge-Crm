@@ -1,6 +1,3 @@
-from src.backend.application.auth.errors import AuthError
-
-
 class ApplicationError(Exception):
     """
     Базовая ошибка слоя ApplicationError
@@ -8,7 +5,7 @@ class ApplicationError(Exception):
 class BadRequestError(ApplicationError):
     pass
 
-class NotAuthorizedError(AuthError):
+class NotAuthorizedError(ApplicationError):
     pass
 
 class ConflictError(ApplicationError):
