@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 from uuid import UUID
 
 from src.backend.domain.funnel.value_objects.win_probability.value_object import WinProbability
@@ -11,6 +12,8 @@ class Funnel:
     id: UUID
     name: Name
     is_deleted: bool = field(default=False)
+    created_at: datetime = field(default_factory=datetime.now)
+    updated_at: datetime = field(default_factory=datetime.now)
 
     @classmethod
     def create(
@@ -22,6 +25,14 @@ class Funnel:
             id=id,
             name=Name(name),
         )
+
+    def _touch(self) -> None:
+        self.updated_at = datetime.now()
+
+    def change_name(self, name: str):
+        self.name = Name(name)
+        self._touch()
+
 
     def delete(self):
         self.is_deleted = True

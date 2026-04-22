@@ -12,6 +12,7 @@ class UserRole(StrEnum):
     consultant = 'consultant'
     sales_manager = 'sales_manager'
     director = 'director'
+    admin = 'admin'
 
 
 @dataclass
