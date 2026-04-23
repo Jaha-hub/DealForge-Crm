@@ -45,6 +45,8 @@ class FunnelStage:
     win_probability: WinProbability
     hex: HexCode = field(default_factory=HexCode("#6366F1"))
     order: int = field(default=0)
+    created_at: datetime = field(default_factory=datetime.now)
+    updated_at: datetime = field(default_factory=datetime.now)
     @classmethod
     def create(
             cls,
@@ -63,3 +65,25 @@ class FunnelStage:
             hex=HexCode(hex),
             order=order,
         )
+
+    def _touch(self)->None:
+        self.updated_at = datetime.now()
+
+    def change_order(self, order:int):
+        self.order = order
+        self._touch()
+
+    def change(
+            self,
+            name:str,
+            win_probability:int,
+            hex:str,
+    ):
+        self.name = Name(name)
+        self.win_probability = WinProbability(win_probability)
+        self.hex = HexCode(hex)
+        self._touch()
+
+    def __hash__(self):
+        return hash(self.id)
+

@@ -1,4 +1,3 @@
-from typing import Protocol
 from uuid import UUID
 
 from sqlalchemy import select, Select, func
@@ -9,7 +8,7 @@ from src.backend.application.funnel.repository import FunnelRepository
 from src.backend.application.shared.dtos.pagination import PageResult
 from src.backend.domain.funnel.entity import Funnel
 from src.backend.domain.shared.value_objects.name.value_object import Name
-from src.backend.infrastructure.db.funnel.models import FunnelModel
+from src.backend.infrastructure.db.sqlalchemy.funnel.models import FunnelModel
 
 
 def to_entity(funnel: FunnelModel) -> Funnel:

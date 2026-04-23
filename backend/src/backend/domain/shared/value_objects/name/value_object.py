@@ -15,7 +15,7 @@ class Name:
         if not (2 <= len(self.value) <= 255):
             raise NameLengthError()
 
-        if not re.match(r'^[a-zA-Zа-яА-ЯёЁ]+$', self.value):
+        if not re.match(r'^[a-zA-Zа-яА-ЯёЁ ]+$', self.value):
             raise InvalidNameError()
 
     def __is_valid(self) -> bool:
