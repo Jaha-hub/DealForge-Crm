@@ -22,3 +22,6 @@ class Email:
         """
         pattern = r'^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$'
         return re.match(pattern, self.value) is not None
+
+    def __str__(self):
+        return self.value

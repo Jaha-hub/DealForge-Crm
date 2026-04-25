@@ -1,15 +1,18 @@
+from dataclasses import dataclass
+
 from src.backend.application.funnel.dtos.update_funnel_stage import UpdateFunnelStageCommand
 from src.backend.application.shared.interfaces.uow import UnitOfWork
 from src.backend.domain.funnel.entity import Funnel, FunnelStage
 from src.backend.domain.funnel.policies.can_update_funnel import CanUpdateFunnelPolicy
 from src.backend.domain.user.entity import User
 
-
+@dataclass
 class UpdateFunnelStageUseCase:
     uow: UnitOfWork
     funnel: Funnel
     stage: FunnelStage
     user: User
+
     async def execute(
             self,
             cmd: UpdateFunnelStageCommand,

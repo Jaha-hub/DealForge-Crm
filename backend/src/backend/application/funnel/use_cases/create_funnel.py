@@ -17,13 +17,13 @@ class CreateFunnelUseCase:
             cmd: CreateFunnelCommand,
     )-> CreateFunnelResult:
         CanCreateFunnelPolicy(self.user).enforce()
+        
         async with self.uow:
-            funnel_id = uuid.uuid4()
             funnel = Funnel.create(
-                id=funnel_id,
                 name=cmd.name,
             )
             funnel = await self.uow.funnels.create_funnel(funnel)
+            await self.uow.commit()
             return CreateFunnelResult(
                 funnel_id=funnel.id,
             )

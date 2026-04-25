@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from fastapi_utils.cbv import cbv
 from starlette import status
-
-from src.backend.application.funnel.dtos.create_funnel_stage import CreateFunnelStageResult, CreateFunnelStageCommand
+from src.backend.application.funnel.dtos.create_funnel_stage import CreateFunnelStageCommand
+from src.backend.application.funnel.dtos.create_funnel_stage import CreateFunnelStageResult
 from src.backend.application.funnel.dtos.update_funnel_stage import UpdateFunnelStageCommand
 from src.backend.application.funnel.services.stage_ordering import FunnelStageOrderingService
 from src.backend.application.funnel.use_cases.create_funnel_stage import CreateFunnelStageUseCase
@@ -45,7 +45,7 @@ class FunnelStageRouter:
         response = await uc.execute(cmd=request)
         return response
     @router.put(
-        "/{funnel_id}/{stage_id}",
+        "/{stage_id}",
         status_code=status.HTTP_200_OK
     )
     async def update_funnel_stage(
@@ -57,11 +57,11 @@ class FunnelStageRouter:
             uow=self.uow,
             funnel=self.funnel,
             stage=stage,
-            user=self.user,
+            user=self.user
         )
         await uc.execute(cmd=request)
     @router.delete(
-        "/{funnel_id}/{stage_id}",
+        "/{stage_id}",
         status_code=status.HTTP_404_NOT_FOUND
     )
     async def delete_funnel_stage(
@@ -78,7 +78,7 @@ class FunnelStageRouter:
         )
         await uc.execute()
     @router.get(
-        "/{funnel_id}/{stage_id}",
+        "/{stage_id}",
         status_code=status.HTTP_200_OK,
     )
     async def get_funnel_stage(
@@ -87,7 +87,7 @@ class FunnelStageRouter:
     ):
         return stage
     @router.get(
-        "/{funnel_id}",
+        "/",
         status_code=status.HTTP_200_OK,
     )
     async def list_funnel_stages(

@@ -33,7 +33,6 @@ class CreateUserUseCase:
 
             user_id = uuid.uuid4()
             user = User.create(
-                id=user_id,
                 email=cmd.email,
                 username=cmd.username,
                 first_name=cmd.first_name,

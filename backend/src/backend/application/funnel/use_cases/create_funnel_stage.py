@@ -1,7 +1,7 @@
 import uuid
 from dataclasses import dataclass
 
-from src.backend.application.funnel.dtos.create_funnel_stage import CreateFunnelStageCommad, CreateFunnelStageResult
+from src.backend.application.funnel.dtos.create_funnel_stage import CreateFunnelStageCommand, CreateFunnelStageResult
 from src.backend.application.funnel.services.stage_ordering import FunnelStageOrderingService
 from src.backend.application.shared.interfaces.uow import UnitOfWork
 from src.backend.domain.funnel.entity import Funnel, FunnelStage
@@ -17,14 +17,13 @@ class CreateFunnelStageUseCase:
     user: User
     async def execute(
             self,
-            cmd: CreateFunnelStageCommad
+            cmd: CreateFunnelStageCommand
     ):
         CanCreateFunnelPolicy(self.user).enforce()
         async with self.uow:
             stages = await self.uow.stages.get_funnel_stages(self.funnel.id)
 
             stage = FunnelStage.create(
-                id=uuid.uuid4(),
                 funnel_id=self.funnel.id,
                 name=cmd.name,
                 win_probability=cmd.win_probability,

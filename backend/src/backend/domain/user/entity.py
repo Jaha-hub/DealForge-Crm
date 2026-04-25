@@ -1,9 +1,10 @@
-import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 
 from enum import StrEnum
 
+from src.backend.domain.shared.entity import BaseEntity
+from src.backend.domain.shared.mixins import TimeActionMixin
 from src.backend.domain.shared.value_objects.email.value_object import Email
 from src.backend.domain.shared.value_objects.name.value_object import Name
 from src.backend.domain.user.value_objects.username.value_object import Username
@@ -16,22 +17,31 @@ class UserRole(StrEnum):
 
 
 @dataclass
-class User:
+class User(BaseEntity,TimeActionMixin):
     """
     Главная сущность пользователя
+
+    Attributes:
+    id: уникальный идентификатор
+    first_name: Имя нашего пользователя
+    last_name: Фамилия нашего пользователя
+    username: уникальный username нашего пользователя
+    email: электронная почта нашего пользователя
+    password_hash: захэшированный пароль
+    last_interaction: временная метка последнего взаимодействия
+    is_active: флажок активности пользователя
+    role: роль пользователя
+    created_at: Временная метка создания сущности
+    updated_at: Временная метка обновления сущности
     """
-    id: uuid.UUID
     first_name: Name
     last_name: Name
     username: Username
     email: Email
-    password_hash: str # hashed_password
+    password_hash: str
     last_interaction: datetime | None = None
     is_active: bool = field(default=True)
     role: UserRole = field(default=UserRole.consultant)
-    created_at: datetime = field(default_factory=datetime.now)
-    updated_at: datetime = field(default_factory=datetime.now)
-
     def full_name(self)-> str:
         """
         Свойство, которое возвращает полное имя пользователя
@@ -63,7 +73,6 @@ class User:
     @classmethod
     def create(
             cls,
-            id: uuid.UUID,
             first_name: str,
             last_name: str,
             username: str,
@@ -73,16 +82,15 @@ class User:
     ):
         """
         Создаёт Объект Пользователя
-        :param id: Индивидуальный Идентификатор
-        :param first_name: Имя пользователя
-        :param last_name: Фамилия Пользователя
-        :param username: Юзернейм
-        :param email: Электронная почта
-        :param password_hash: хешированый пароль
+        Args:
+            first_name: Имя пользователя
+            last_name: Фамилия Пользователя
+            username: Юзернейм
+            email: Электронная почта
+            password_hash: хешированый пароль
         :return:
         """
         return cls(
-            id=id,
             first_name=Name(first_name),
             last_name=Name(last_name),
             username=Username(username),
@@ -104,16 +112,31 @@ class User:
             self,
             first_name: str,
     ):
+        """
+        Меняет Имя пользователя
+        Args:
+            first_name: новое имя пользователя
+        """
         self.first_name = Name(first_name)
         self.touch()
 
     def change_last_name(
             self,
-            first_name: str,
+            last_name: str,
     ):
-        self.first_name = Name(first_name)
+        """
+        Меняет Фамилию пользователя
+        Args:
+            last_name: новая фамилия пользователя
+        """
+        self.first_name = Name(last_name)
         self.touch()
 
     def change_email(self, email: str):
+        """
+        Меняет почту пользователя
+        Args:
+            email: новая почта пользователя
+        """
         self.email = Email(email)
         self.touch()

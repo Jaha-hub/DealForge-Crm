@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.backend.application.auth.dtos.get_me import GetMeCommand, GetMeResult
+from src.backend.application.auth.dtos.get_me import GetMeCommand
 from src.backend.application.auth.errors import InactiveUserError
 from src.backend.application.auth.interfaces.security.token import TokenService
 from src.backend.application.shared.interfaces.uow import UnitOfWork

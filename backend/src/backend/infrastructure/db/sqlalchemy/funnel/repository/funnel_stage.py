@@ -1,13 +1,13 @@
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.backend.application.funnel.repository import FunnelStageRepository
 from src.backend.domain.funnel.entity import FunnelStage
 from src.backend.domain.funnel.value_objects.win_probability.value_object import WinProbability
 from src.backend.domain.shared.value_objects.hex.value_object import HexCode
 from src.backend.domain.shared.value_objects.name.value_object import Name
+from src.backend.infrastructure.db.sqlalchemy.core.repository.repository import SqlalchemyRepository
 from src.backend.infrastructure.db.sqlalchemy.funnel.models import FunnelStageModel
 
 
@@ -15,9 +15,9 @@ def to_model(stage: FunnelStage)-> FunnelStageModel:
     return FunnelStageModel(
         id=stage.id,
         funnel_id=stage.funnel_id,
-        name=stage.name.value,
-        win_probability=stage.win_probability.value,
-        hex=stage.hex.value,
+        name=str(stage.name),
+        win_probability=int(stage.win_probability),
+        hex=str(stage.hex),
         order=stage.order,
         created_at=stage.created_at,
         updated_at=stage.updated_at,
@@ -35,9 +35,7 @@ def to_entity(stage: FunnelStageModel)-> FunnelStage:
         updated_at=stage.updated_at,
     )
 
-class SqlalchemyFunnelStageRepository(FunnelStageRepository):
-    def __init__(self, session: AsyncSession):
-        self.session = session
+class SqlalchemyFunnelStageRepository(SqlalchemyRepository,FunnelStageRepository):
 
     async def get_funnel_stage_by_id(self, stage_id: UUID) -> FunnelStage | None:
         stmt = select(FunnelStageModel).where(FunnelStageModel.id == stage_id)
@@ -57,8 +55,9 @@ class SqlalchemyFunnelStageRepository(FunnelStageRepository):
         await self.session.flush()
 
     async def save_all(self, stages: list[FunnelStage]) -> None:
-        instances = [to_model(s) for s in stages]
-        self.session.add_all(instances)
+        for s in stages:
+            instance = to_model(s)
+            await self.session.merge(instance)
         await self.session.flush()
 
     async def get_funnel_stages(self, funnel_id: UUID) -> list[FunnelStage] | None:

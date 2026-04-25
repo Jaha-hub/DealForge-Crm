@@ -1,13 +1,12 @@
 from uuid import UUID
 
 from sqlalchemy import select, Select, func
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from src.backend.application.funnel.dtos.list_funnel import ListFunnelCommand, FunnelSortEnum
 from src.backend.application.funnel.repository import FunnelRepository
 from src.backend.application.shared.dtos.pagination import PageResult
 from src.backend.domain.funnel.entity import Funnel
 from src.backend.domain.shared.value_objects.name.value_object import Name
+from src.backend.infrastructure.db.sqlalchemy.core.repository.repository import SqlalchemyRepository
 from src.backend.infrastructure.db.sqlalchemy.funnel.models import FunnelModel
 
 
@@ -23,22 +22,20 @@ def to_entity(funnel: FunnelModel) -> Funnel:
 def to_model(funnel: Funnel) -> FunnelModel:
     return FunnelModel(
         id=funnel.id,
-        name=funnel.name.value,
+        name=str(funnel.name),
         is_deleted=bool(funnel.is_deleted),
         created_at=funnel.created_at,
         updated_at=funnel.updated_at,
     )
 
 
-class SqlAlchemyFunnelRepository(FunnelRepository):
+class SqlAlchemyFunnelRepository(SqlalchemyRepository,FunnelRepository):
     SORT_COLUMNS = {
         FunnelSortEnum.name_asc: FunnelModel.name.asc(),
         FunnelSortEnum.name_desc: FunnelModel.name.desc(),
         FunnelSortEnum.created_at_asc: FunnelModel.created_at.asc(),
         FunnelSortEnum.created_at_desc: FunnelModel.created_at.desc()
     }
-    def __init__(self, session: AsyncSession):
-        self.session = session
 
     async def create_funnel(self, funnel: Funnel) -> Funnel:
         instance = to_model(funnel)
