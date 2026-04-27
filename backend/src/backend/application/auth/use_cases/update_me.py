@@ -8,6 +8,12 @@ from src.backend.domain.user.entity import User
 
 @dataclass
 class UpdateMeUseCase:
+    """
+    Запуск сценария обновления полей пользователя
+    Attributes:
+        uow: Менеджер сессий
+        user: Сущность пользователя
+    """
     uow: UnitOfWork
     user: User
 
@@ -15,6 +21,13 @@ class UpdateMeUseCase:
             self,
             cmd: UpdateMeCommand
     ):
+        """
+        Запуск сценария для обновления полей
+        Args:
+            cmd: Команда для обновления полей
+        Raises:
+            EmailAlreadyExistsError: имейл принадлежит другому пользователю
+        """
         async with self.uow:
             exists = await self.uow.users.exists_email(str(cmd.email), self.user.id)
 

@@ -9,6 +9,12 @@ from src.backend.domain.user.entity import User
 
 @dataclass
 class GetMeUseCase:
+    """
+    Сценарий получения себя
+    Attributes:
+        uow: Менеджер сессий
+        tokens: Сервис токенов
+    """
     uow: UnitOfWork
     tokens: TokenService
 
@@ -16,6 +22,15 @@ class GetMeUseCase:
             self,
             cmd: GetMeCommand,
     )->User:
+        """
+        Запуск сценария нахождения самого себя
+        Args:
+            cmd: команда для нахождения самого себя
+        Returns:
+            пользователь
+        Raises:
+            InactiveUserError: пользователь не в сети
+        """
         async with self.uow:
              user_id = self.tokens.decode(cmd.token)
 

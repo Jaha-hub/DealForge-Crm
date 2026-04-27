@@ -12,6 +12,15 @@ from tests.unit.domain.shared.specification import Specification
 
 @dataclass
 class ChangePasswordUseCase:
+    """
+    Сценарий смены пароля пользователя
+    Attributes:
+        uow: Менеджер сессий
+        hasher: Сервис хеширования пароля
+        password_spec: Набор правил для пароля
+        password_diff_spec: Набор правил для нового пароля
+        user: Сущность пользователя
+    """
     uow: UnitOfWork
     hasher: Hasher
     password_spec: Specification[str]
@@ -19,7 +28,17 @@ class ChangePasswordUseCase:
     user: User
 
     async def execute(self, cmd: ChangePasswordCommand):
-        # Проверка самого пароля
+        """
+        Запуск сценария смены пароля
+        Args:
+            cmd: команда для смены пароля
+        Returns:
+            Новый захешированый пароль
+        Raises:
+            WeakPasswordError: пароль не подходит под требования
+            SamePasswordError: новый пароль совпадает с предыдущим
+            InvalidPasswordError: не подходящий пароль
+        """
         if not self.password_spec.is_satisfied_by(cmd.new_password):
             raise WeakPasswordError("Your new password is weak")
 

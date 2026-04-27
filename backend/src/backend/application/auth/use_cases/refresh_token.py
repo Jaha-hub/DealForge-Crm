@@ -8,6 +8,12 @@ from src.backend.application.shared.interfaces.uow import UnitOfWork
 
 @dataclass
 class RefreshTokenUseCase:
+    """
+    Сценарий перезаписи срока токена
+    Attributes:
+        uow: Менеджер сессий
+        tokens: Сервис токенов
+    """
     uow: UnitOfWork
     tokens: TokenService
 
@@ -15,6 +21,16 @@ class RefreshTokenUseCase:
         self,
         cmd: RefreshTokenCommand,
     ):
+        """
+        Запуск Сценария Авторизации
+        Args:
+            cmd: команда для перезаписи срока токена
+        Returns:
+            новый срок для токена
+
+        Raises:
+            InactiveUserError: пользователь не активен
+        """
         async with self.uow:
             user_id = self.tokens.decode(cmd.refresh_token, is_refresh=True)
 

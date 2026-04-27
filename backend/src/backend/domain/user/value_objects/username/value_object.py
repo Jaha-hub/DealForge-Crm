@@ -1,43 +1,64 @@
 import re
 from dataclasses import dataclass
 
-
-from src.backend.domain.user.value_objects.username.errors import \
-(
-    UnsupportedUsernameTypeError,
-    InvalidUsernameLengthError,
-    InvalidUsernameFormatError
-)
-
+from src.backend.application.auth.errors import WeakPasswordError
 
 @dataclass(frozen=True)
-class Username:
+class Password:
     """
-    VO Username
+    VO (Value Object) для пароля пользователя
+    Инкапсулирует значение пароля и гарантирует его валидность
     """
+
     value: str
 
     def __post_init__(self):
         """
-        Проверяет правильность значения
-        Raises:
-            UnsupportedUsernameTypeError: если тип не str
-            InvalidUsernameLengthError: если длинна не находится в нужном диапазоне
-            InvalidUsernameFormatError: если указан неправильный формат имени пользователя
-        """
-        if not isinstance(self.value, str):
-            raise UnsupportedUsernameTypeError()
-        if len(self.value) < 3 or len(self.value) > 255:
-            raise InvalidUsernameLengthError
-        if not self.__is_valid():
-            raise InvalidUsernameFormatError()
-        object.__setattr__(self, 'value', self.value.lower())
+        Вызывается после инициализации объекта.
+        Проверяет корректность значения пароля
 
-    def __is_valid(self):
+        Raises:
+            WeakPasswordError: если пароль не соответствует требованиям безопасности
         """
-        Проверяет правильность формата указанного значения
-        returns:
-            True если формат правильный
+        self._validate()
+
+    def _validate(self):
         """
-        pattern = r'^[a-zA-Z][a-zA-Z0-9_]*$'
-        return re.match(pattern, self.value) is not None
+        Выполняет валидацию пароля по следующим правилам:
+        - Минимальная длина 8 символов
+        - Наличие хотя бы одной заглавной буквы
+        - Наличие хотя бы одной строчной буквы
+        - Наличие хотя бы одной цифры
+        - Наличие хотя бы одного специального символа
+
+        Raises:
+            WeakPasswordError: если любое из условий не выполнено
+        """
+        v = self.value
+
+        if len(v) < 8:
+            raise WeakPasswordError("Пароль должен содержать минимум 8 символов")
+
+        if not re.search(r"[A-Z]", v):
+            raise WeakPasswordError("Пароль должен содержать хотя бы одну заглавную букву")
+
+        if not re.search(r"[a-z]", v):
+            raise WeakPasswordError("Пароль должен содержать хотя бы одну строчную букву")
+
+        if not re.search(r"\d", v):
+            raise WeakPasswordError("Пароль должен содержать хотя бы одну цифру")
+
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
+            raise WeakPasswordError("Пароль должен содержать хотя бы один специальный символ")
+
+    def is_same_as(self, other: "Password") -> bool:
+        """
+        Сравнивает текущий пароль с другим
+
+        Args:
+            other (Password): другой объект пароля
+
+        Returns:
+            bool: True, если пароли совпадают, иначе False
+        """
+        return self.value == other.value

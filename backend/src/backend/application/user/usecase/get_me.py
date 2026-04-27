@@ -9,10 +9,29 @@ from src.backend.domain.user.entity import User
 
 @dataclass
 class GetMeUseCase:
+    """
+    Сценарий получения текущего пользователя по токену
+
+    Атрибуты:
+        uow: Объект для доступа к данным
+        tokens: Сервис для работы с токенами
+    """
     uow: UnitOfWork
     tokens: TokenService
 
     async def execute(self, cmd: GetMeCommand) -> User:
+        """
+       Возвращает текущего пользователя на основе токена
+
+       Args:
+           cmd (GetMeCommand): Команда с токеном
+
+       Returns:
+           User: Найденный пользователь
+
+       Raises:
+           UserNotFoundError: Если пользователь не найден
+       """
         async with self.uow:
             user_id = self.tokens.decode(cmd.token)
             user = await self.uow.users.get_by_id(user_id)

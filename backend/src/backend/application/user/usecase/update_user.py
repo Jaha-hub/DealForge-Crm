@@ -10,6 +10,14 @@ from src.backend.domain.user.policy.can_update_user import CanUpdateUserPolicy
 
 @dataclass
 class UpdateUserUseCase:
+    """
+    Сценарий обновления данных пользователя.
+
+    Атрибуты:
+        uow : Объект для управления транзакциями
+        hasher : Сервис для хэширования паролей
+        actor : Пользователь, выполняющий обновление
+    """
     uow: UnitOfWork
     hasher: Hasher
     actor: User

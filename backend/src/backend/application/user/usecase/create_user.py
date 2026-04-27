@@ -12,6 +12,15 @@ from tests.unit.domain.shared.specification import Specification
 
 @dataclass
 class CreateUserUseCase:
+    """
+    Сценарий (use case) для создания нового пользователя
+
+    Атрибуты:
+        uow: Объект для управления транзакциями и доступом к БД
+        hasher: Сервис для хэширования паролей
+        actor: Пользователь, выполняющий действие
+        password_spec: Спецификация для проверки пароля
+    """
     uow: UnitOfWork
     hasher: Hasher
     actor: User
@@ -20,6 +29,20 @@ class CreateUserUseCase:
         self,
         cmd: CreateUserCommand
     ):
+        """
+        Создаёт нового пользователя в системе
+
+        Args:
+            cmd (CreateUserCommand): Команда с данными для создания пользователя
+
+        Returns:
+            CreateUserResult: Результат с идентификатором созданного пользователя
+
+        Raises:
+            EmailAlreadyExistsError: Если пользователь с таким email уже существует
+            WeakPasswordError: Если username уже занят
+            PermissionError: Если текущий пользователь не имеет прав на создание
+        """
         async with self.uow:
             CanCreateUserPolicy(self.actor, cmd.role).enforce()
 
