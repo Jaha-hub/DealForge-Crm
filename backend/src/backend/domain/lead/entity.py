@@ -54,6 +54,8 @@ class LeadCustomField(BaseEntity,TimeActionMixin, LeadCustomFieldEnum):
     name: LeadName
     type: FieldType
     enums: list[LeadCustomFieldEnum] = field(default_factory=list)
+    is_deleted: bool = field(default=False)
+
 
     @classmethod
     def create(
@@ -76,21 +78,20 @@ class LeadCustomField(BaseEntity,TimeActionMixin, LeadCustomFieldEnum):
             type=type,
         )
 
+    def delete(self):
+        self.is_deleted = True
+        self.touch()
+
     def add_enum(
             self,
             value: str
-    ):
-        """
-        Добавляет новое значение перечисления.
-
-        Args:
-            value: значение опции
-
-        Raises:
-            Exception: если тип поля не поддерживает перечисления
-        """
-        if not self.type in [FieldType.select_many, FieldType.select_one]:
+    ) -> None:
+        if not self.type.is_select:
             raise
+        if any(e.value == value for e in self.enums):
+            raise
+            # if not self.type in [FieldType.select_many, FieldType.select_one]:
+        #     raise
         new_enum = LeadCustomFieldEnum.create(self.id, value)
         self.enums.append(new_enum)
         self.touch()
@@ -177,103 +178,157 @@ class Lead(BaseEntity,TimeActionMixin, LeadCustomFieldValue):
     contact: Contact
     is_delete: bool = field(default=False)
     assign_to: UUID | None = None
+    funnel_id: UUID | None = None
     custom_values: list[LeadCustomFieldValue] = field(default_factory=list)
 
     def set_custom_value(
             self,
             custom_field: LeadCustomField,
-            value: FieldValue,
+            value: FieldValue
     ):
-        """
-        Устанавливает значение кастомного поля.
+        custom_field.type.validate_value(value)
 
-        Args:
-            custom_field: Поле
-            value: Значение
+        if value.enum_id is not None:
+            valid_enum_ids = {e.id for e in custom_field.enums}
+            if value.enum_id not in valid_enum_ids:
+                raise
 
-        Raises:
-            Exception: Если значение не подходит для поля
-        """
-        if custom_field.type.select_many:
-            if value.enum_id is not None:
-                if not value.enum_id in [e.id for e in custom_field.enums]:
-                    raise
-                existing = self._find_value(custom_field.id)
-                if not value.enum_id in [e.id for e in custom_field.enums]:
-                    raise
-                if not existing:
-                    existing.value = value
-                    self.custom_values.append(
-                        LeadCustomFieldValue.create(
-                            custom_field_id=custom_field.id,
-                            value=value,
-                            lead_id=self.id
-                        )
-                    )
-                else:
-                    raise
+        if custom_field.type.is_multi:
+            pass
+        else:
+            pass
 
-
-            elif custom_field.type.text and value.value_text is not None:
-                existing = self._find_value(custom_field.id)
-                if not value.enum_id in [e.id for e in custom_field.enums]:
-                    raise
-                if existing:
-                    existing.value = value
-                else:
-                    self.custom_values.append(
-                        LeadCustomFieldValue.create(
-                            custom_field_id=custom_field.id,
-                            value=value,
-                            lead_id=self.id
-                        )
-                    )
-
-            elif custom_field.type.boolean and value.value_boolean is not None:
-                existing = self._find_value(custom_field.id)
-                if not value.enum_id in [e.id for e in custom_field.enums]:
-                    raise
-                if existing:
-                    existing.value = value
-                else:
-                    self.custom_values.append(
-                        LeadCustomFieldValue.create(
-                            custom_field_id=custom_field.id,
-                            value=value,
-                            lead_id=self.id
-                        )
-                    )
-
-            elif custom_field.type.datetime and value.value_date is not None:
-                existing = self._find_value(custom_field.id)
-                if not value.enum_id in [e.id for e in custom_field.enums]:
-                    raise
-                if existing:
-                    existing.value = value
-                else:
-                    self.custom_values.append(
-                        LeadCustomFieldValue.create(
-                            custom_field_id=custom_field.id,
-                            value=value,
-                            lead_id=self.id
-                        )
-                    )
-
-            elif custom_field.type.number and value.value_number is not None:
-                existing = self._find_value(custom_field.id)
-                if not value.enum_id in [e.id for e in custom_field.enums]:
-                    raise
-                if existing:
-                    existing.value = value
-                else:
-                    self.custom_values.append(
-                        LeadCustomFieldValue.create(
-                            custom_field_id=custom_field.id,
-                            value=value,
-                            lead_id=self.id
-                        )
-                    )
         self.touch()
+
+    def _add_multi_value(
+            self,
+            custom_field_id: UUID,
+            value: FieldValue
+    ):
+        existing = self._find_value(custom_field_id, value.enum_id)
+        if existing is not None:
+            return
+        self.custom_values.append(
+            LeadCustomFieldValue.create(
+                custom_field_id=custom_field_id,
+                value=value,
+                lead_id=self.id
+            )
+        )
+
+    def _add_single_value(
+            self,
+            custom_field_id: UUID,
+            value: FieldValue
+    ):
+        existing = self._find_value(custom_field_id)
+        if existing is not None:
+            existing.value = value
+            return
+        self.custom_values.append(
+            LeadCustomFieldValue.create(
+                custom_field_id=custom_field_id,
+                value=value,
+                lead_id=self.id
+            )
+        )
+
+
+    # def set_custom_value(
+    #         self,
+    #         custom_field: LeadCustomField,
+    #         value: FieldValue,
+    # ):
+    #     """
+    #     Устанавливает значение кастомного поля.
+    #
+    #     Args:
+    #         custom_field: Поле
+    #         value: Значение
+    #
+    #     Raises:
+    #         Exception: Если значение не подходит для поля
+    #     """
+    #     if custom_field.type.select_many:
+    #         if value.enum_id is not None:
+    #             if not value.enum_id in [e.id for e in custom_field.enums]:
+    #                 raise
+    #             existing = self._find_value(custom_field.id)
+    #             if not value.enum_id in [e.id for e in custom_field.enums]:
+    #                 raise
+    #             if not existing:
+    #                 existing.value = value
+    #                 self.custom_values.append(
+    #                     LeadCustomFieldValue.create(
+    #                         custom_field_id=custom_field.id,
+    #                         value=value,
+    #                         lead_id=self.id
+    #                     )
+    #                 )
+    #             else:
+    #                 raise
+    #
+    #
+    #         elif custom_field.type.text and value.value_text is not None:
+    #             existing = self._find_value(custom_field.id)
+    #             if not value.enum_id in [e.id for e in custom_field.enums]:
+    #                 raise
+    #             if existing:
+    #                 existing.value = value
+    #             else:
+    #                 self.custom_values.append(
+    #                     LeadCustomFieldValue.create(
+    #                         custom_field_id=custom_field.id,
+    #                         value=value,
+    #                         lead_id=self.id
+    #                     )
+    #                 )
+    #
+    #         elif custom_field.type.boolean and value.value_boolean is not None:
+    #             existing = self._find_value(custom_field.id)
+    #             if not value.enum_id in [e.id for e in custom_field.enums]:
+    #                 raise
+    #             if existing:
+    #                 existing.value = value
+    #             else:
+    #                 self.custom_values.append(
+    #                     LeadCustomFieldValue.create(
+    #                         custom_field_id=custom_field.id,
+    #                         value=value,
+    #                         lead_id=self.id
+    #                     )
+    #                 )
+    #
+    #         elif custom_field.type.datetime and value.value_date is not None:
+    #             existing = self._find_value(custom_field.id)
+    #             if not value.enum_id in [e.id for e in custom_field.enums]:
+    #                 raise
+    #             if existing:
+    #                 existing.value = value
+    #             else:
+    #                 self.custom_values.append(
+    #                     LeadCustomFieldValue.create(
+    #                         custom_field_id=custom_field.id,
+    #                         value=value,
+    #                         lead_id=self.id
+    #                     )
+    #                 )
+    #
+    #         elif custom_field.type.number and value.value_number is not None:
+    #             existing = self._find_value(custom_field.id)
+    #             if not value.enum_id in [e.id for e in custom_field.enums]:
+    #                 raise
+    #             if existing:
+    #                 existing.value = value
+    #             else:
+    #                 self.custom_values.append(
+    #                     LeadCustomFieldValue.create(
+    #                         custom_field_id=custom_field.id,
+    #                         value=value,
+    #                         lead_id=self.id
+    #                     )
+    #                 )
+    #     self.touch()
 
     def remove_custom_value(
         self,
@@ -299,3 +354,7 @@ class Lead(BaseEntity,TimeActionMixin, LeadCustomFieldValue):
             (v for v in self.custom_values if option(v)),
             None
         )
+
+    def delete(self):
+        self.is_delete = True
+        self.touch()

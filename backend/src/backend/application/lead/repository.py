@@ -1,0 +1,13 @@
+from typing import Protocol
+
+from src.backend.domain.lead.entity import LeadCustomField
+
+
+class LeadCustomFieldRepository(Protocol):
+    async def add(self, field: LeadCustomField)->LeadCustomField:...
+
+    async def update(self, field: LeadCustomField)->None:...
+
+    async def remove(self, field: LeadCustomField)->None:...
+
+    async def delete(self, field: LeadCustomField)->None:...
