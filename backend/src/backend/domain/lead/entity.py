@@ -10,6 +10,13 @@ from src.backend.domain.shared.mixins import TimeActionMixin
 
 @dataclass
 class LeadCustomFieldEnum(BaseEntity):
+    """
+    Представляет одно значение перечисления для кастомного поля.
+
+    Attributes:
+        custom_field_id: Идентификатор связанного кастомного поля
+        value: Значение опции
+    """
     custom_field_id: UUID
     value: str
 
@@ -19,6 +26,16 @@ class LeadCustomFieldEnum(BaseEntity):
             custom_field_id: UUID,
             value: str,
     ):
+        """
+        Создает новую опцию перечисления.
+
+        Args:
+            custom_field_id: кастомного поля
+            value: Значение опции
+
+        Returns:
+            Созданный объект опции
+        """
         return cls(
             custom_field_id=custom_field_id,
             value=value,
@@ -26,6 +43,14 @@ class LeadCustomFieldEnum(BaseEntity):
 
 @dataclass
 class LeadCustomField(BaseEntity,TimeActionMixin, LeadCustomFieldEnum):
+    """
+    Представляет кастомное поле лида.
+
+    Attributes:
+        name: название поля
+        type: тип поля
+        enums: список возможных значений для select-полей
+    """
     name: LeadName
     type: FieldType
     enums: list[LeadCustomFieldEnum] = field(default_factory=list)
@@ -36,6 +61,16 @@ class LeadCustomField(BaseEntity,TimeActionMixin, LeadCustomFieldEnum):
             name:str,
             type:FieldType,
     ):
+        """
+        Создает новое кастомное поле.
+
+        Args:
+            name: название поля
+            type: тип поля
+
+        Returns:
+            LeadCustomField: созданный объект
+        """
         return cls(
             name=LeadName(name),
             type=type,
@@ -45,6 +80,15 @@ class LeadCustomField(BaseEntity,TimeActionMixin, LeadCustomFieldEnum):
             self,
             value: str
     ):
+        """
+        Добавляет новое значение перечисления.
+
+        Args:
+            value: значение опции
+
+        Raises:
+            Exception: если тип поля не поддерживает перечисления
+        """
         if not self.type in [FieldType.select_many, FieldType.select_one]:
             raise
         new_enum = LeadCustomFieldEnum.create(self.id, value)
@@ -55,6 +99,12 @@ class LeadCustomField(BaseEntity,TimeActionMixin, LeadCustomFieldEnum):
             self,
             enum_id: UUID
     ):
+        """
+        Удаляет значение перечисления.
+
+        Args:
+            enum_id: идентификатор опции
+        """
         self.enums = [e for e in self.enums if e.id == enum_id]
         self.touch()
 
@@ -62,12 +112,26 @@ class LeadCustomField(BaseEntity,TimeActionMixin, LeadCustomFieldEnum):
             self,
             name: str
     ):
+        """
+        Переименовывает поле.
+
+        Args:
+            name: новое название
+        """
         self.name = LeadName(name)
         self.touch()
 
 
 @dataclass
 class LeadCustomFieldValue(BaseEntity):
+    """
+    Значение кастомного поля для конкретного лида.
+
+    Attributes:
+        custom_field_id: кастомного поля
+        lead_id: ID лида
+        value: значение поля
+    """
     custom_field_id: UUID
     lead_id: UUID
     value: FieldValue
@@ -79,6 +143,17 @@ class LeadCustomFieldValue(BaseEntity):
             lead_id: UUID,
             value: FieldValue,
     ):
+        """
+        Создает значение кастомного поля.
+
+        Args:
+            custom_field_id: ID поля
+            lead_id: ID лида
+            value: значение
+
+        Returns:
+            LeadCustomFieldValue — созданный объект
+        """
         return cls(
             custom_field_id=custom_field_id,
             lead_id=lead_id,
@@ -88,6 +163,16 @@ class LeadCustomFieldValue(BaseEntity):
 
 @dataclass
 class Lead(BaseEntity,TimeActionMixin, LeadCustomFieldValue):
+    """
+    Представляет лида.
+
+    Attributes:
+        name: имя лида
+        contact: контактная информация
+        is_delete: флаг удаления
+        assign_to: назначенный пользователь
+        custom_values: LeadCustomFieldValue — список кастомных значений
+    """
     name: LeadName
     contact: Contact
     is_delete: bool = field(default=False)
@@ -99,6 +184,16 @@ class Lead(BaseEntity,TimeActionMixin, LeadCustomFieldValue):
             custom_field: LeadCustomField,
             value: FieldValue,
     ):
+        """
+        Устанавливает значение кастомного поля.
+
+        Args:
+            custom_field: Поле
+            value: Значение
+
+        Raises:
+            Exception: Если значение не подходит для поля
+        """
         if custom_field.type.select_many:
             if value.enum_id is not None:
                 if not value.enum_id in [e.id for e in custom_field.enums]:
