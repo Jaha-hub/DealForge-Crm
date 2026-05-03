@@ -1,6 +1,9 @@
 from dataclasses import dataclass, field
 from uuid import UUID
 
+from pydantic.v1.schema import field_schema
+
+from src.backend.domain.lead.errors import InvalidEnumIdError, FieldTypeNotSelectError
 from src.backend.domain.lead.value_objects.contact.value_object import Contact
 from src.backend.domain.lead.value_objects.field_type.value_object import FieldType
 from src.backend.domain.lead.value_objects.field_value.value_objects import FieldValue
@@ -42,17 +45,17 @@ class LeadCustomFieldEnum(BaseEntity):
         )
 
 @dataclass
-class LeadCustomField(BaseEntity,TimeActionMixin, LeadCustomFieldEnum):
+class LeadCustomField(BaseEntity,TimeActionMixin):
     """
     Представляет кастомное поле лида.
 
     Attributes:
         name: название поля
-        type: тип поля
+        field_type: тип поля
         enums: список возможных значений для select-полей
     """
     name: LeadName
-    type: FieldType
+    field_type: FieldType
     enums: list[LeadCustomFieldEnum] = field(default_factory=list)
     is_deleted: bool = field(default=False)
 
@@ -61,21 +64,21 @@ class LeadCustomField(BaseEntity,TimeActionMixin, LeadCustomFieldEnum):
     def create(
             cls,
             name:str,
-            type:FieldType,
+            field_type:FieldType,
     ):
         """
         Создает новое кастомное поле.
 
         Args:
             name: название поля
-            type: тип поля
+            field_type: тип поля
 
         Returns:
             LeadCustomField: созданный объект
         """
         return cls(
             name=LeadName(name),
-            type=type,
+            field_type=field_type,
         )
 
     def delete(self):
@@ -86,10 +89,10 @@ class LeadCustomField(BaseEntity,TimeActionMixin, LeadCustomFieldEnum):
             self,
             value: str
     ) -> None:
-        if not self.type.is_select:
-            raise
+        if not self.field_type.is_select:
+            raise FieldTypeNotSelectError()
         if any(e.value == value for e in self.enums):
-            raise
+            raise FieldTypeNotSelectError()
             # if not self.type in [FieldType.select_many, FieldType.select_one]:
         #     raise
         new_enum = LeadCustomFieldEnum.create(self.id, value)
@@ -163,7 +166,7 @@ class LeadCustomFieldValue(BaseEntity):
 
 
 @dataclass
-class Lead(BaseEntity,TimeActionMixin, LeadCustomFieldValue):
+class Lead(BaseEntity,TimeActionMixin):
     """
     Представляет лида.
 
@@ -186,14 +189,14 @@ class Lead(BaseEntity,TimeActionMixin, LeadCustomFieldValue):
             custom_field: LeadCustomField,
             value: FieldValue
     ):
-        custom_field.type.validate_value(value)
+        custom_field.field_type.validate_value(value)
 
         if value.enum_id is not None:
             valid_enum_ids = {e.id for e in custom_field.enums}
             if value.enum_id not in valid_enum_ids:
-                raise
+                raise InvalidEnumIdError()
 
-        if custom_field.type.is_multi:
+        if custom_field.field_type.is_multi:
             pass
         else:
             pass
@@ -204,7 +207,7 @@ class Lead(BaseEntity,TimeActionMixin, LeadCustomFieldValue):
             self,
             custom_field_id: UUID,
             value: FieldValue
-    ):
+    )->None:
         existing = self._find_value(custom_field_id, value.enum_id)
         if existing is not None:
             return
@@ -220,7 +223,7 @@ class Lead(BaseEntity,TimeActionMixin, LeadCustomFieldValue):
             self,
             custom_field_id: UUID,
             value: FieldValue
-    ):
+    )->None:
         existing = self._find_value(custom_field_id)
         if existing is not None:
             existing.value = value

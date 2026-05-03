@@ -13,11 +13,11 @@ def create_user():
     Session = sessionmaker(bind=engine)
     user = UserModel(
         id=uuid.uuid4(),
-        email="joxon@example.com",
+        email="Joxon@google.com",
         first_name="Joxon",
         last_name="Admin",
         role="admin",
-        username="admin",
+        username="admin123",
         password_hash=Argon2Hasher().hash("Admin@1234"),
     )
     with Session() as session:

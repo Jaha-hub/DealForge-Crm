@@ -10,7 +10,7 @@ from src.backend.infrastructure.db.sqlalchemy.user.repository import SqlalchemyU
 class SqlalchemyUnitOfWork(UnitOfWork):
     def __init__(self,session:AsyncSession):
         self.session = session
-
+        self.__commited = False
     async def __aenter__(self):
         self.users = SqlalchemyUserRepository(self.session)
         self.funnels = SqlAlchemyFunnelRepository(self.session)
@@ -20,9 +20,13 @@ class SqlalchemyUnitOfWork(UnitOfWork):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         if exc_type:
             await self.rollback()
+            return
+        if not self.__commited and self.session.in_transaction():
+            await self.rollback()
 
     async def commit(self):
         await self.session.commit()
+        self.__commited = True
 
     async def rollback(self):
         await self.session.rollback()

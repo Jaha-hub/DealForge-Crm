@@ -18,5 +18,8 @@ class CanCreateUserPolicy(Policy):
             self._actor.role in self.ALLOWED_ROLES
         ) and (
             (self._role == UserRole.admin and self._actor.role == UserRole.admin) or
-            (self._actor == UserRole.director and self._role != UserRole.admin)
+            (self._actor.role == UserRole.director and self._role != UserRole.admin)
         )
+
+    def _error_message(self) -> str:
+        return f"You have not permission to create user with role: {self._role}"

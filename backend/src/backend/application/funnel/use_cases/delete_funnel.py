@@ -19,7 +19,7 @@ class DeleteFunnelUseCase:
             self.funnel.delete()
 
             # 2. Передача сущности в репозиторий для фиксации изменений в БД
-            await self.uow.funnels.delete_funnel(self.funnel)
+            await self.uow.funnels.update_funnel(self.funnel)
 
             # 3. Завершение транзакции
             await self.uow.commit()

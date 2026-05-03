@@ -3,18 +3,14 @@ from src.backend.domain.user.entity import UserRole, User
 from uuid import UUID
 
 
-class CanUpdateUserPolicy(Policy):
+class CanUpdateFunnelPolicy(Policy):
     ALLOWED_ROLES = {UserRole.admin, UserRole.director}
 
-    def __init__(
-        self,
-        actor: User,
-        user_id: UUID,
-    ):
+    def __init__(self, actor: User):
         self._actor = actor
-        self._user_id = user_id
+
+    def _error_message(self) -> str:
+        return f"You can't update funnel"
 
     def is_satisfied_by(self) -> bool:
-        is_self = self._actor.id == self._user_id
-        is_privileged = self._actor.role in self.ALLOWED_ROLES
-        return is_self or is_privileged
+        return self._actor.role in self.ALLOWED_ROLES

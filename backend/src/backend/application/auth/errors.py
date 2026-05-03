@@ -1,4 +1,4 @@
-from src.backend.application.shared.errors import ApplicationError, NotAuthorizedError, BadRequestError
+from src.backend.application.shared.errors import ApplicationError, NotAuthorizedError, BadRequestError, ConflictError
 
 
 class AuthError(ApplicationError):
@@ -26,4 +26,10 @@ class SamePasswordError(BadRequestError,AuthError):
 
 
 class EmailAlreadyExistsError(BadRequestError,AuthError):
+    pass
+
+class UsernameAlreadyExistsError(ConflictError, AuthError):
+    pass
+
+class InActiveUserError(NotAuthorizedError,AuthError):
     pass

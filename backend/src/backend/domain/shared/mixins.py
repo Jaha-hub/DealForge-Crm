@@ -1,6 +1,6 @@
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID
 
 @dataclass(kw_only=True)
@@ -25,12 +25,12 @@ class TimeActionMixin:
         updated_at: Временная метка обновления сущности
     """
 
-    created_at: datetime = field(default_factory=datetime.now)
-    updated_at: datetime = field(default_factory=datetime.now)
+    created_at: datetime = field(default_factory=lambda :datetime.now(tz=timezone.utc))
+    updated_at: datetime = field(default_factory=lambda :datetime.now(tz=timezone.utc))
 
     def touch(self) -> None:
         """
         Будет фиксировать время изменения
         :return:
         """
-        self.updated_at = datetime.now()
+        self.updated_at = datetime.now(tz=timezone.utc)

@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy import select
 
 from src.backend.application.funnel.repository import FunnelStageRepository
-from src.backend.domain.funnel.entity import FunnelStage
+from src.backend.domain.funnel.entity import FunnelStage, StageKind
 from src.backend.domain.funnel.value_objects.win_probability.value_object import WinProbability
 from src.backend.domain.shared.value_objects.hex.value_object import HexCode
 from src.backend.domain.shared.value_objects.name.value_object import Name
@@ -19,6 +19,8 @@ def to_model(stage: FunnelStage)-> FunnelStageModel:
         win_probability=int(stage.win_probability),
         hex=str(stage.hex),
         order=stage.order,
+        is_archived=stage.is_archived,
+        kind=stage.kind,
         created_at=stage.created_at,
         updated_at=stage.updated_at,
     )
@@ -31,6 +33,8 @@ def to_entity(stage: FunnelStageModel)-> FunnelStage:
         win_probability=WinProbability(stage.win_probability),
         hex=HexCode(stage.hex),
         order=stage.order,
+        is_archived=stage.is_archived,
+        kind=StageKind(stage.kind),
         created_at=stage.created_at,
         updated_at=stage.updated_at,
     )
@@ -45,7 +49,7 @@ class SqlalchemyFunnelStageRepository(SqlalchemyRepository,FunnelStageRepository
 
     async def update_funnel_stage(self, stage: FunnelStage) -> FunnelStage:
         instance = to_model(stage)
-        self.session.add(instance)
+        await self.session.merge(instance)
         await self.session.flush()
         return to_entity(instance)
 

@@ -11,3 +11,4 @@ class UsernameAlreadyExistsError(DomainError):
 
 class EmailAlreadyExistsError(DomainError):
     pass
+

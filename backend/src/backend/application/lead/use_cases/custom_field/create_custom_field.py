@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.backend.application.lead.dtos.custom_fields.create_custom_fields import CreateCustomFieldCommand
+from src.backend.application.lead.dtos.custom_fields.create_custom_field import CreateCustomFieldCommand
 from src.backend.application.shared.interfaces.uow import UnitOfWork
 from src.backend.domain.lead.entity import LeadCustomField
 from src.backend.domain.lead.value_objects.field_type.value_object import FieldType
@@ -20,7 +20,7 @@ class CreateCustomFieldUseCase:
         async with self.uow:
             field = LeadCustomField.create(
                 name=cmd.name,
-                type=cmd.type,
+                field_type=cmd.type,
             )
 
             if cmd.type.is_select:

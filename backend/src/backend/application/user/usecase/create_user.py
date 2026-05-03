@@ -1,7 +1,7 @@
 import uuid
 from dataclasses import dataclass
 
-from src.backend.application.auth.errors import EmailAlreadyExistsError, WeakPasswordError
+from src.backend.application.auth.errors import EmailAlreadyExistsError, WeakPasswordError, UsernameAlreadyExistsError
 from src.backend.application.auth.interfaces.security.hasher import Hasher
 from src.backend.application.shared.interfaces.uow import UnitOfWork
 from src.backend.application.user.dtos.create_user import CreateUserCommand, CreateUserResult
@@ -49,6 +49,10 @@ class CreateUserUseCase:
             exists_email = await self.uow.users.exists_email(cmd.email)
             if exists_email:
                 raise EmailAlreadyExistsError()
+
+            exists_username = await self.uow.users.exists_username(cmd.username)
+            if exists_username:
+                raise UsernameAlreadyExistsError()
 
             exists_username = await self.uow.users.exists_username(cmd.username)
             if exists_username:

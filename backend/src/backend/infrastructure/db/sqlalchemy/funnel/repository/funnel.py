@@ -45,13 +45,13 @@ class SqlAlchemyFunnelRepository(SqlalchemyRepository,FunnelRepository):
 
     async def update_funnel(self, funnel: Funnel) -> Funnel:
         instance = to_model(funnel)
-        self.session.add(instance)
+        await self.session.merge(instance)
         await self.session.flush()
         return to_entity(instance)
 
     async def delete_funnel(self, funnel: Funnel) -> None:
         instance = to_model(funnel)
-        self.session.add(instance)
+        await self.session.delete(instance)
         await self.session.flush()
 
     async def get_funnel_by_id(self, funnel_id: UUID) -> Funnel | None:
@@ -75,8 +75,8 @@ class SqlAlchemyFunnelRepository(SqlalchemyRepository,FunnelRepository):
         return result.scalar_one_or_none()
 
     async def get_funnels(self, cmd: ListFunnelCommand) -> PageResult[Funnel]:
-        stmt = select(FunnelModel)
-        stmt= self._apply_filters(stmt.cmd.q)
+        stmt = select(FunnelModel).where(FunnelModel.is_deleted == False)
+        stmt= self._apply_filters(stmt,cmd.q)
         total = await self._count(stmt)
 
         if total == 0:
@@ -92,5 +92,5 @@ class SqlAlchemyFunnelRepository(SqlalchemyRepository,FunnelRepository):
             items=[to_entity(funnel) for funnel in funnels],
             total_items=total,
             page=cmd.paginatio.page,
-            size=cmd.paginatio.limit,
+            size=cmd.paginatio.size,
         )
