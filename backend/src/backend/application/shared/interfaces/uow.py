@@ -2,6 +2,7 @@ from typing import Protocol
 
 from src.backend.application.funnel.repository import FunnelRepository, FunnelStageRepository
 from src.backend.application.lead.repository import LeadCustomFieldRepository
+from src.backend.application.source.repository import SourceRepository
 from src.backend.application.user.repository import UserRepository
 
 
@@ -10,6 +11,7 @@ class UnitOfWork(Protocol):
     funnels: FunnelRepository
     stages: FunnelStageRepository
     custom_fields: LeadCustomFieldRepository
+    source: SourceRepository
     async def commit(self) -> None: ...
 
     async def rollback(self) -> None: ...

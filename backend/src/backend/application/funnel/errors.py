@@ -10,3 +10,8 @@ class StageNotFoundError(StageError):
 class StageNotInFunnelError(StageError):
     pass
 
+class FunnelNotFoundError(StageError):
+    pass
+
+
+
