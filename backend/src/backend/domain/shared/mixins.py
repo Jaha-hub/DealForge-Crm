@@ -25,7 +25,8 @@ class TimeActionMixin:
         updated_at: Временная метка обновления сущности
     """
 
-    created_at: datetime = field(default_factory=lambda :datetime.now(tz=timezone.utc))
+    created_at: datetime = field(default_factory=lambda :
+    datetime.now(tz=timezone.utc))
     updated_at: datetime = field(default_factory=lambda :datetime.now(tz=timezone.utc))
 
     def touch(self) -> None:
