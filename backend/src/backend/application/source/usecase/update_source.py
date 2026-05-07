@@ -2,12 +2,13 @@ from dataclasses import dataclass, replace
 from uuid import UUID
 
 from src.backend.application.funnel.errors import FunnelNotFoundError, StageNotFoundError, StageNotInFunnelError
-from src.backend.application.lead.errors import CustomFieldError, SlugAlreadyExistsError, AssigmentPoolInvalidRoleError, \
-    AssigmentPoolMemberInactiveError, AssigmentPoolMemberNotFoundError
+from src.backend.application.lead.errors import CustomFieldError, SlugAlreadyExistsError
+from src.backend.application.source.errors import AssigmentPoolInvalidRoleError, AssigmentPoolMemberInactiveError, AssigmentPoolMemberNotFoundError
 from src.backend.application.shared.interfaces.uow import UnitOfWork
 from src.backend.application.source.dtos.create_source import FormFieldDTO
 from src.backend.application.source.dtos.update_source import UpdateSourceCommand, UpdateSourceConfigDTO, \
     UpdateWebhookConfigDTO, UpdateManualConfigDTO, UpdatePublicFormConfigDTO
+from src.backend.application.source.errors import CannotChangeSourceTypeError
 from src.backend.domain.source.entity import Source
 from src.backend.domain.source.enums.value_objects.form_field_config.value_object import FormFieldConfig, FormFieldKind
 from src.backend.domain.source.enums.value_objects.source_config.value_object import SourceConfig, WebhookConfig, \

@@ -10,6 +10,7 @@ from src.backend.application.source.dtos.create_source import CreateSourceComman
     CreateWebhookConfigDTO, CreatePublicFormConfigDTO, CreateManualConfigDTO, FormFieldDTO
 from src.backend.domain.source.entity import Source
 from src.backend.domain.source.enums.value_objects.form_field_config.value_object import FormFieldKind, FormFieldConfig
+from src.backend.domain.source.policy.can_create_source import can_create_source
 from src.backend.domain.user.entity import User
 
 
@@ -23,7 +24,7 @@ class CreateSourceUseCase:
         self,
         cmd: CreateSourceCommand
     ) -> CreateSourceResult:
-        # Policy
+        can_create_source(user=self.user)
         async with self.uow:
             match cmd.config:
                 case CreateWebhookConfigDTO() as cfg:
