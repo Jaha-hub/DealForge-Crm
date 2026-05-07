@@ -2,6 +2,9 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from src.backend.application.funnel.errors import StageNotFoundError, StageNotInFunnelError, FunnelNotFoundError
+from src.backend.application.lead.errors import CustomFieldError, SlugAlreadyExistsError
+from src.backend.application.source.errors import \
+    AssigmentPoolMemberNotFoundError, AssigmentPoolMemberInactiveError, AssigmentPoolInvalidRoleError
 from src.backend.application.shared.interfaces.uow import UnitOfWork
 from src.backend.application.source.dtos.create_source import CreateSourceCommand, CreateSourceResult, \
     CreateWebhookConfigDTO, CreatePublicFormConfigDTO, CreateManualConfigDTO, FormFieldDTO
@@ -150,12 +153,12 @@ class CreateSourceUseCase:
 
         for uid in existing_ids:
             if uid not in assignment_pool:
-                raise
+                raise AssigmentPoolMemberNotFoundError()
         for u in users:
             if not u.is_active:
-                raise
+                raise AssigmentPoolMemberInactiveError()
             if u.role not in [User.role.sales_manager,User.role.consultant]:
-                raise
+                raise AssigmentPoolInvalidRoleError()
 
     async def _ensure_slug_unique(
             self,
@@ -163,7 +166,7 @@ class CreateSourceUseCase:
     ):
         exists = await self.uow.source.exists_slug(slug)
         if exists:
-            raise
+            raise SlugAlreadyExistsError()
 
     async def _ensure_custom_fields(
             self,
@@ -182,4 +185,4 @@ class CreateSourceUseCase:
 
         for cf_id in custom_field_ids:
             if cf_id not in existing_ids:
-                raise
+                raise CustomFieldError()

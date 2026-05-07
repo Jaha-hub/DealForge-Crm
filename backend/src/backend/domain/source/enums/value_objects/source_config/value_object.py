@@ -15,7 +15,7 @@ class WebhookConfig:
     secret_token_hash: str
     default_funnel_id: UUID
     default_stage_id: UUID
-    assignment_strategy: str # Enum
+    assignment_strategy: AssignmentStrategy # Enum
     field_mapping: dict[str, str] = field(default_factory=dict)
     assignment_pool: tuple[UUID,...] = field(default_factory=tuple)
 

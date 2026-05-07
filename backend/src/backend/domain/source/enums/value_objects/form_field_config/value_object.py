@@ -16,7 +16,7 @@ class FormFieldKind(StrEnum):
 
 @dataclass(frozen=True)
 class FormFieldConfig:
-    kind: str # name, phone, custom_field
+    kind: FormFieldKind # name, phone, custom_field
     label: str
     is_required: bool = field(default=False)
     custom_field_id: UUID | None= field(default=None)
