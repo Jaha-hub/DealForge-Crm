@@ -1,4 +1,4 @@
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Annotated
 
 from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,3 +20,8 @@ async def get_uow(
     return SqlalchemyUnitOfWork(
         session=session
     )
+
+UoWDep = Annotated[
+    SqlalchemyUnitOfWork,
+    Depends(get_uow),
+]

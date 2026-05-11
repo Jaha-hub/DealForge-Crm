@@ -1,9 +1,11 @@
+from enum import StrEnum
+
 from pydantic import BaseModel, Field
 
 from src.backend.application.shared.dtos.pagination import PageRequest
 from src.backend.domain.source.enums.source_tupe.enum import SourceType
 
-class ListSourceSort(BaseModel):
+class ListSourceSort(StrEnum):
     created_at_desc = "created_at_desc"
     created_at_asc = "created_at_asc"
     name_desc = "name_desc"

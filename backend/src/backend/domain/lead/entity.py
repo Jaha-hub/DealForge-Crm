@@ -126,6 +126,10 @@ class LeadCustomField(BaseEntity,TimeActionMixin):
         self.touch()
 
 
+    def restore(self)->None:
+        self.is_deleted = False
+        self.touch()
+
 @dataclass
 class LeadCustomFieldValue(BaseEntity):
     """
@@ -179,6 +183,8 @@ class Lead(BaseEntity,TimeActionMixin):
     """
     name: LeadName
     contact: Contact
+    source_id: UUID
+    stage_id: UUID
     is_delete: bool = field(default=False)
     assign_to: UUID | None = None
     funnel_id: UUID | None = None

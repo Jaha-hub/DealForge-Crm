@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from uuid import UUID
 
 from src.backend.application.shared.interfaces.uow import UnitOfWork
 from src.backend.domain.lead.entity import LeadCustomField

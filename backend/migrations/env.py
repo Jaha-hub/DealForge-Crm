@@ -6,8 +6,10 @@ from sqlalchemy import pool
 from alembic import context
 
 from src.backend.infrastructure.db.sqlalchemy.core.models import Base
+from src.backend.infrastructure.db.sqlalchemy.source.models import SourceModel
 from src.backend.infrastructure.db.sqlalchemy.user.models import UserModel
 from src.backend.infrastructure.db.sqlalchemy.funnel.models import FunnelModel, FunnelStageModel
+
 
 
 

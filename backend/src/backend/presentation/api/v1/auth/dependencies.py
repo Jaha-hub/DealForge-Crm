@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi.params import Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
@@ -36,6 +38,10 @@ async def get_current_user(
     )
     return user
 
+CurrentUserDep = Annotated[
+    User,
+    Depends(get_current_user),
+]
 
 async def get_password_length_spec() -> PasswordLengthSpecification:
     return PasswordLengthSpecification()

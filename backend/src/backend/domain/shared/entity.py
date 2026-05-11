@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 
-from src.backend.infrastructure.db.sqlalchemy.core.mixins import IntIdMixin
+from src.backend.infrastructure.db.sqlalchemy.core.mixins import UUIDMixin
+
+
 
 
 
 @dataclass
-class BaseEntity(IntIdMixin):
+class BaseEntity(UUIDMixin):
     """
     Базовая Сущность
     """
