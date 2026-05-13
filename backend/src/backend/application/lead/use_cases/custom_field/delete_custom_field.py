@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from src.backend.application.shared.interfaces.uow import UnitOfWork
 from src.backend.domain.lead.entity import LeadCustomField
+from src.backend.domain.lead.policies import CanManageCustomField
 from src.backend.domain.user.entity import User
 
 
@@ -9,12 +10,15 @@ from src.backend.domain.user.entity import User
 class DeleteCustomFieldUseCase:
     uow: UnitOfWork
     user: User
-    custom_field: LeadCustomField
+    field: LeadCustomField
 
     async def execute(
             self
     )->None:
+        CanManageCustomField(self.user).enforce()
         async with self.uow:
-            self.custom_field.delete()
-            await self.custom_field.update(self.custom_field)
+            self.field.delete()
+
+            await self.uow.custom_fields.update(self.field)
+
             await self.uow.commit()

@@ -6,3 +6,17 @@ class CustomFieldError(ApplicationError):
 
 class SlugAlreadyExistsError(ApplicationError):
     pass
+
+class CustomFieldNameAlreadyExistsError(ApplicationError):
+    pass
+class SelectFieldWithoutEnumsError(ApplicationError):
+    pass
+class EnumsNotAllowForNonSelectError(ApplicationError):
+    pass
+
+class CustomFieldNotFoundError(ApplicationError):
+    pass
+
+class EnumInUseError(ApplicationError):
+    pass
+

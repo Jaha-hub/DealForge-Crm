@@ -6,7 +6,8 @@ from pydantic import BaseModel
 
 
 class GetCustomFieldCommand(BaseModel):
-    id: UUID
+    field_id: UUID
+    include_deleted: bool
 
 @dataclass
 class CustomFieldResult:

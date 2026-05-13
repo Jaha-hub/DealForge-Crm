@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from src.backend.application.lead.dtos.custom_fields.add_enum_value import AddEnumValueCommand
 from src.backend.application.shared.interfaces.uow import UnitOfWork
 from src.backend.domain.lead.entity import LeadCustomField
+from src.backend.domain.lead.policies import CanManageCustomField
 from src.backend.domain.user.entity import User
 
 
@@ -16,6 +17,7 @@ class AddEnumValueUseCase:
             self,
             cmd: AddEnumValueCommand
     )->None:
+        CanManageCustomField(self.user).enforce()
         async with self.uow:
             self.custom_field.add_enum(cmd.value)
             await self.uow.custom_fields.update(self.custom_field)

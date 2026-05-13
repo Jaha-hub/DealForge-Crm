@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 
 from src.backend.application.lead.dtos.custom_fields.get_custom_field import GetCustomFieldCommand, CustomFieldResult
+from src.backend.application.lead.dtos.custom_fields.views import CustomFieldViewDTO
+from src.backend.application.lead.errors import CustomFieldNotFoundError
+from src.backend.application.lead.prejections.custom_field_view import to_view
 from src.backend.application.shared.interfaces.uow import UnitOfWork
 from src.backend.domain.user.entity import User
 
@@ -12,18 +15,13 @@ class GetCustomFieldUseCase:
 
     async def execute(
         self,
-        cmd: GetCustomFieldCommand,
-    ) -> CustomFieldResult:
-
+        cmd: GetCustomFieldCommand
+    ) -> CustomFieldViewDTO:
         async with self.uow:
-            field = await self.uow.custom_fields.get_by_id(cmd.id)
-
+            field = await self.uow.custom_fields.get_by_id(cmd.field_id)
             if not field:
-                raise ValueError("Custom field not found")
+                raise CustomFieldNotFoundError()
+            if field.is_deleted and not cmd.include_deleted:
+                raise CustomFieldNotFoundError()
 
-            return CustomFieldResult(
-                id=field.id,
-                name=field.name,
-                type=field.field_type.value,
-                enum_values=[e.value for e in field.enums] if field.enums else None
-            )
+            return to_view(field)

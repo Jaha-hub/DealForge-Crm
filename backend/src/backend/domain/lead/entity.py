@@ -10,6 +10,8 @@ from src.backend.domain.lead.value_objects.field_value.value_objects import Fiel
 from src.backend.domain.lead.value_objects.lead_name.value_object import LeadName
 from src.backend.domain.shared.entity import BaseEntity
 from src.backend.domain.shared.mixins import TimeActionMixin
+from src.backend.infrastructure.db.sqlalchemy.core.mixins import UUIDMixin
+
 
 @dataclass
 class LeadCustomFieldEnum(BaseEntity):
@@ -45,7 +47,7 @@ class LeadCustomFieldEnum(BaseEntity):
         )
 
 @dataclass
-class LeadCustomField(BaseEntity,TimeActionMixin):
+class LeadCustomField(BaseEntity,UUIDMixin,TimeActionMixin):
     """
     Представляет кастомное поле лида.
 
