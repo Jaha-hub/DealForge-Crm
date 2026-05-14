@@ -22,5 +22,5 @@ class UpdateCustomFieldUseCase:
         async with self.uow:
             self.field.rename(cmd.name)
 
-            await self.uow.custom_fields.update(cmd.field)
+            await self.uow.custom_fields.update(self.field)
             await self.uow.commit()

@@ -111,7 +111,7 @@ class LeadCustomField(BaseEntity,UUIDMixin,TimeActionMixin):
         Args:
             enum_id: идентификатор опции
         """
-        self.enums = [e for e in self.enums if e.id == enum_id]
+        self.enums = [e for e in self.enums if e.id != enum_id]
         self.touch()
 
     def rename(
@@ -205,9 +205,9 @@ class Lead(BaseEntity,TimeActionMixin):
                 raise InvalidEnumIdError()
 
         if custom_field.field_type.is_multi:
-            pass
+            self._add_multi_value(custom_field.id, value)
         else:
-            pass
+            self._add_single_value(custom_field.id, value)
 
         self.touch()
 

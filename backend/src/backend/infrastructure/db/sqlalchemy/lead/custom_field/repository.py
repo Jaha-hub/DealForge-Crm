@@ -31,19 +31,12 @@ class SqlAlchemyLeadCustomFieldRepository(SqlalchemyRepository, LeadCustomFieldR
 
         existing_enums = await self._fetch_enums(field.id)
         existing_by_id = {e.id: e for e in existing_enums}
-        new_by_id = {e.id: e for e in  field.enums}
-
-        #INSERT
-        for enum_id, enum in new_by_id.items():
-            self.session.add(enum_to_model(enum))
+        new_by_id = {e.id: e for e in field.enums}
 
         for enum_id, enum in new_by_id.items():
-            old_enum = existing_by_id.get(enum_id)
-            if old_enum is None:
-                raise
-            if old_enum != enum.value:
-                continue
-            if old_enum != enum.value:
+            if enum_id not in existing_by_id:
+                self.session.add(enum_to_model(enum))
+            elif existing_by_id[enum_id].value != enum.value:
                 await self.session.merge(enum_to_model(enum))
 
         removed_ids = set(existing_by_id) - set(new_by_id)
@@ -102,8 +95,37 @@ class SqlAlchemyLeadCustomFieldRepository(SqlalchemyRepository, LeadCustomFieldR
         if not fields:
             return []
 
+        result_list = []
+        for f in fields:
+            enums = await self._fetch_enums(f.id)
+            result_list.append(field_to_entity(f, enums))
+        return result_list
 
-    async def _fetch_enums(self, field_id:UUID) -> list[LeadCustomField]:
+    async def remove(self, field: LeadCustomField) -> None:
+        stmt = delete(LeadCustomFieldModel).where(LeadCustomFieldModel.id == field.id)
+        await self.session.execute(stmt)
+        await self.session.flush()
+
+    async def get_all(self) -> list[LeadCustomField]:
+        return await self.list_all(include_deleted=True)
+
+    async def count_values_with_enum_values(self, enum_id: UUID) -> int:
+        return 0
+
+    async def list_by_ids(self, custom_field_ids: list) -> list[LeadCustomField]:
+        stmt = select(LeadCustomFieldModel).where(LeadCustomFieldModel.id.in_(custom_field_ids))
+        result = await self.session.execute(stmt)
+        fields = result.scalars().all()
+        result_list = []
+        for f in fields:
+            enums = await self._fetch_enums(f.id)
+            result_list.append(field_to_entity(f, enums))
+        return result_list
+
+    async def delete(self, field: LeadCustomField) -> None:
+        await self.update(field)
+
+    async def _fetch_enums(self, field_id: UUID) -> list[LeadCustomFieldEnumModel]:
         stmt = select(LeadCustomFieldEnumModel).where(LeadCustomFieldEnumModel.custom_field_id == field_id)
         result = await self.session.execute(stmt)
-        return list[result.scalars().all()]
+        return list(result.scalars().all())
