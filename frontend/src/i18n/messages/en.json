@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "leads": "Leads",
+    "funnels": "Funnels",
+    "sources": "Sources",
+    "customFields": "Custom Fields",
+    "analytics": "Analytics",
+    "users": "Users",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Enter your credentials to access DealForge CRM"
+  },
+  "leads": {
+    "title": "Leads",
+    "create": "Create lead",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "comment": "Comment",
+    "tags": "Tags",
+    "source": "Source",
+    "funnel": "Funnel",
+    "stage": "Stage",
+    "assignTo": "Assigned to",
+    "createdAt": "Created at",
+    "empty": "No leads found",
+    "emptyDescription": "Create your first lead or adjust filters"
+  },
+  "funnels": {
+    "title": "Funnels",
+    "create": "Create funnel",
+    "name": "Name",
+    "stages": "Stages",
+    "empty": "No funnels created",
+    "emptyDescription": "Create your first sales funnel"
+  },
+  "stages": {
+    "initial": "Initial",
+    "intermediate": "Intermediate",
+    "won": "Won",
+    "lost": "Lost"
+  },
+  "sources": {
+    "title": "Sources",
+    "create": "Create source",
+    "manual": "Manual",
+    "webhook": "Webhook",
+    "publicForm": "Public Form",
+    "webhookKey": "Secret Key",
+    "regenerate": "Regenerate",
+    "embedCode": "Embed Code",
+    "copy": "Copy"
+  },
+  "customFields": {
+    "title": "Custom Fields",
+    "create": "Create field",
+    "name": "Field name",
+    "type": "Type",
+    "types": {
+      "text": "Text",
+      "number": "Number",
+      "date": "Date",
+      "time": "Time",
+      "select_one": "Single select",
+      "select_many": "Multi select",
+      "boolean": "Boolean"
+    }
+  },
+  "analytics": {
+    "title": "Analytics",
+    "dashboard": "Dashboard",
+    "funnel": "Funnel",
+    "sources": "Sources",
+    "managers": "Managers",
+    "dynamics": "Dynamics",
+    "totalLeads": "Total leads",
+    "conversion": "Conversion",
+    "openLeads": "Open leads",
+    "leadsBySource": "Leads by source"
+  },
+  "users": {
+    "title": "Users",
+    "create": "Add user",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "roles": {
+      "admin": "Administrator",
+      "director": "Director",
+      "sales_manager": "Sales Manager",
+      "consultant": "Consultant"
+    }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "noData": "No data"
+  }
+}

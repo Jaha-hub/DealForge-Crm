@@ -208,11 +208,120 @@ JWT_ALGORITHM=HS256
 ## Запуск проекта
 
 ```bash
+# Backend
 cd backend
 poetry install
 alembic upgrade head
 uvicorn src.backend.main:app --reload
+
+# Frontend
+cd frontend
+pnpm install
+pnpm dev       # http://localhost:3000
+pnpm build     # проверка сборки
 ```
+
+---
+
+## Фронтенд — технологический стек
+
+| Категория | Инструмент |
+|---|---|
+| Фреймворк | Next.js 14 (App Router) |
+| Язык | TypeScript 5 |
+| Стили | Tailwind CSS 3 |
+| UI-компоненты | shadcn/ui (Nova style → переписан под Tailwind v3) |
+| Иконки | Lucide React |
+| Серверный стейт | TanStack Query v5 |
+| Клиентский стейт | Zustand v5 |
+| Формы | React Hook Form v7 + Zod v4 |
+| HTTP | Axios v1 (interceptors + refresh queue) |
+| DnD | @dnd-kit/core + @dnd-kit/sortable |
+| Графики | Recharts v3 |
+| i18n | next-intl v4 (ru / uz / en) |
+| Пакетный менеджер | pnpm v9 (Node 20 совместим) |
+
+**Переменные окружения (`frontend/.env.local`):**
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+NEXT_PUBLIC_WS_URL=ws://localhost:8000
+```
+
+---
+
+## Фронтенд — архитектура
+
+- **App Router** с route groups: `(auth)` (публичные) / `(app)` (защищённые)
+- **Feature-based структура**: каждая фича в `src/features/<name>/` (api.ts, hooks.ts, types.ts, components/)
+- **Middleware** (`src/middleware.ts`): проверяет `refresh_token` cookie, редирект на `/login` если нет
+- **Auth**: `accessToken` в памяти (Zustand), `refreshToken` в httpOnly cookie (7d)
+- **Axios interceptor**: при 401 — авто-refresh через очередь (`failedQueue`), retry запроса
+- **QueryClient**: создаётся через `makeQueryClient()` внутри `useState` в `Providers` — нет SSR singleton
+
+**Ключевые файлы фронтенда:**
+```
+frontend/src/
+├── app/                    # Next.js App Router pages
+│   ├── (auth)/login/       # Публичная страница входа
+│   ├── (app)/dashboard/    # Защищённые страницы
+│   └── layout.tsx          # Root layout с Providers
+├── components/
+│   ├── ui/                 # shadcn/ui компоненты (25 штук)
+│   ├── shared/             # PageHeader, EmptyState, LoadingSpinner, ConfirmDialog, RoleBadge
+│   └── providers.tsx       # QueryClient + TooltipProvider + Toaster
+├── features/
+│   ├── auth/api.ts         # login, logout, me
+│   ├── leads/types.ts      # Lead, LeadFilters, FieldType, StageType
+│   ├── funnels/types.ts    # Funnel, FunnelStage
+│   ├── sources/types.ts    # Source, SourceType
+│   ├── custom-fields/      # CustomField, CustomFieldEnum
+│   └── notifications/      # Notification, NotificationEventType
+├── lib/
+│   ├── axios.ts            # Axios instance + interceptors
+│   ├── query-client.ts     # makeQueryClient()
+│   └── utils.ts            # cn(), formatDate(), formatDateTime(), formatCurrency()
+├── store/
+│   ├── auth.store.ts       # user, setAuth(), logout(), useIsAuthenticated()
+│   └── ui.store.ts         # sidebarOpen, activeFunnelId
+├── types/
+│   └── common.ts           # BaseEntity, SoftDeletable (все entity наследуют)
+├── i18n/
+│   ├── routing.ts          # locales: [ru, uz, en], default: ru
+│   ├── request.ts          # getRequestConfig
+│   └── messages/           # ru.json, uz.json, en.json
+└── middleware.ts           # Auth guard + redirect logic
+```
+
+**Важные решения фронтенда:**
+| Решение | Причина |
+|---|---|
+| `isAuthenticated` убран из store | Derivable от `user !== null`; было бы дублированием состояния |
+| `makeQueryClient()` вместо singleton | SSR singleton загрязняет кэш между запросами в App Router |
+| `authApi.refresh()` убран | Refresh прозрачно делает axios interceptor; прямой вызов — дублирование |
+| `REDIRECT_IF_AUTHENTICATED` вместо `AUTH_ROUTES` | Название отражает назначение (отличие от PUBLIC_ROUTES) |
+| `BaseEntity`/`SoftDeletable` в `types/common.ts` | Все entity наследуют — нет дублирования `id/created_at/updated_at/is_deleted` |
+| Кэш `Intl` форматтеров в `utils.ts` | `Intl` конструкторы дорогие; в списках/таблицах — hot path |
+| `ROLE_CONFIG` (один объект) в RoleBadge | Два параллельных map могут разъехаться при добавлении ролей |
+
+---
+
+## Фронтенд — статус разработки
+
+| Фаза | Что | Статус |
+|---|---|---|
+| 0 | Настройка проекта (Next.js, shadcn, зависимости, stores, middleware, i18n) | ✅ Завершена |
+| 1 | Auth (LoginForm) + AppShell (Sidebar, Header) | ⏳ Следующая |
+| 2 | Kanban-доска (DnD, колонки, карточки) | ⬜ |
+| 3 | Список лидов + Карточка лида | ⬜ |
+| 4 | Управление воронками и этапами | ⬜ |
+| 5 | Источники (webhook-ключ, embed) | ⬜ |
+| 6 | Кастомные поля + enum-редактор | ⬜ |
+| 7 | Аналитика (Recharts, 4 вкладки) | ⬜ |
+| 8 | Уведомления WebSocket | ⬜ |
+| 9 | Пользователи (admin) + Профиль | ⬜ |
+| 10 | Публичная форма (без auth) | ⬜ |
+
+**Полный план фронтенда:** `frontend/PLAN.md`
 
 ---
 

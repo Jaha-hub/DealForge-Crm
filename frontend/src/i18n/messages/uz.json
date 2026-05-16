@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "leads": "Lidlar",
+    "funnels": "Voronkalar",
+    "sources": "Manbalar",
+    "customFields": "Maxsus maydonlar",
+    "analytics": "Analitika",
+    "users": "Foydalanuvchilar",
+    "profile": "Profil",
+    "logout": "Chiqish"
+  },
+  "auth": {
+    "login": "Kirish",
+    "logout": "Chiqish",
+    "email": "Email",
+    "password": "Parol",
+    "forgotPassword": "Parolni unutdingizmi?",
+    "loginTitle": "Tizimga kirish",
+    "loginSubtitle": "DealForge CRM ga kirish uchun ma'lumotlarni kiriting"
+  },
+  "leads": {
+    "title": "Lidlar",
+    "create": "Lid yaratish",
+    "name": "Ism",
+    "phone": "Telefon",
+    "email": "Email",
+    "comment": "Izoh",
+    "tags": "Teglar",
+    "source": "Manba",
+    "funnel": "Voronka",
+    "stage": "Bosqich",
+    "assignTo": "Mas'ul",
+    "createdAt": "Yaratilgan sana",
+    "empty": "Lidlar topilmadi",
+    "emptyDescription": "Birinchi lidni yarating yoki filtrlarni o'zgartiring"
+  },
+  "funnels": {
+    "title": "Voronkalar",
+    "create": "Voronka yaratish",
+    "name": "Nomi",
+    "stages": "Bosqichlar",
+    "empty": "Voronkalar yaratilmagan",
+    "emptyDescription": "Birinchi sotuv voronkasini yarating"
+  },
+  "stages": {
+    "initial": "Boshlang'ich",
+    "intermediate": "O'rta",
+    "won": "Yutildi",
+    "lost": "Yutqazildi"
+  },
+  "sources": {
+    "title": "Manbalar",
+    "create": "Manba yaratish",
+    "manual": "Qo'lda kiritish",
+    "webhook": "Webhook",
+    "publicForm": "Ommaviy forma",
+    "webhookKey": "Maxfiy kalit",
+    "regenerate": "Qayta yaratish",
+    "embedCode": "Joylashtirish kodi",
+    "copy": "Nusxa olish"
+  },
+  "customFields": {
+    "title": "Maxsus maydonlar",
+    "create": "Maydon yaratish",
+    "name": "Maydon nomi",
+    "type": "Turi",
+    "types": {
+      "text": "Matn",
+      "number": "Son",
+      "date": "Sana",
+      "time": "Vaqt",
+      "select_one": "Bitta tanlash",
+      "select_many": "Ko'p tanlash",
+      "boolean": "Ha/Yo'q"
+    }
+  },
+  "analytics": {
+    "title": "Analitika",
+    "dashboard": "Dashboard",
+    "funnel": "Voronka",
+    "sources": "Manbalar",
+    "managers": "Menejerlar",
+    "dynamics": "Dinamika",
+    "totalLeads": "Jami lidlar",
+    "conversion": "Konversiya",
+    "openLeads": "Ochiq lidlar",
+    "leadsBySource": "Manbalar bo'yicha lidlar"
+  },
+  "users": {
+    "title": "Foydalanuvchilar",
+    "create": "Foydalanuvchi qo'shish",
+    "name": "Ism",
+    "email": "Email",
+    "role": "Rol",
+    "roles": {
+      "admin": "Administrator",
+      "director": "Rahbar",
+      "sales_manager": "Menejer",
+      "consultant": "Konsultant"
+    }
+  },
+  "common": {
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "delete": "O'chirish",
+    "edit": "Tahrirlash",
+    "create": "Yaratish",
+    "confirm": "Tasdiqlash",
+    "loading": "Yuklanmoqda...",
+    "error": "Xato",
+    "success": "Muvaffaqiyatli",
+    "search": "Qidirish",
+    "filter": "Filtr",
+    "reset": "Tozalash",
+    "noData": "Ma'lumot yo'q"
+  }
+}
