@@ -5,6 +5,10 @@ from src.backend.domain.user.value_objects.username.errors import InvalidUsernam
 from src.backend.domain.user.value_objects.username.value_object import Username
 
 
+@pytest.fixture
+def test_username():
+    return Username("testuser")
+
 @pytest.mark.parametrize(
     'value, expected',
     [

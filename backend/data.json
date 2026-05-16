@@ -1,0 +1,33 @@
+// webhook
+{
+  "name": "Telegram Bot",
+  "config": {
+    "type": "webhook",
+    "default_funnel_id": "uuid",
+    "default_stage_id": "uuid",
+    "assignment_strategy": "round_robin",
+    "assignment_pool": ["uuid1", "uuid2"],
+    "field_mapping": {"phone": "lead.contact.phone"}
+  }
+}
+
+// public_form
+{
+  "name": "Лендинг весна 2026",
+  "config": {
+    "type": "public_form",
+    "slug": "spring-2026",
+    "fields": [
+      {"kind": "name", "label": "Ваше имя", "is_required": true},
+      {"kind": "phone", "label": "Телефон", "is_required": true}
+    ],
+    "default_funnel_id": "uuid",
+    "default_stage_id": "uuid"
+  }
+}
+
+// manual
+{
+  "name": "Звонки",
+  "config": {"type": "manual"}
+}

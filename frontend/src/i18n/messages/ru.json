@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "dashboard": "Дашборд",
+    "leads": "Лиды",
+    "funnels": "Воронки",
+    "sources": "Источники",
+    "customFields": "Кастомные поля",
+    "analytics": "Аналитика",
+    "users": "Пользователи",
+    "profile": "Профиль",
+    "logout": "Выйти"
+  },
+  "auth": {
+    "login": "Войти",
+    "logout": "Выйти",
+    "email": "Email",
+    "password": "Пароль",
+    "forgotPassword": "Забыли пароль?",
+    "loginTitle": "Вход в систему",
+    "loginSubtitle": "Введите данные для входа в DealForge CRM"
+  },
+  "leads": {
+    "title": "Лиды",
+    "create": "Создать лид",
+    "name": "Имя",
+    "phone": "Телефон",
+    "email": "Email",
+    "comment": "Комментарий",
+    "tags": "Теги",
+    "source": "Источник",
+    "funnel": "Воронка",
+    "stage": "Этап",
+    "assignTo": "Ответственный",
+    "createdAt": "Дата создания",
+    "empty": "Лиды не найдены",
+    "emptyDescription": "Создайте первый лид или измените фильтры"
+  },
+  "funnels": {
+    "title": "Воронки",
+    "create": "Создать воронку",
+    "name": "Название",
+    "stages": "Этапы",
+    "empty": "Воронки не созданы",
+    "emptyDescription": "Создайте первую воронку продаж"
+  },
+  "stages": {
+    "initial": "Начальный",
+    "intermediate": "Промежуточный",
+    "won": "Выиграно",
+    "lost": "Проиграно"
+  },
+  "sources": {
+    "title": "Источники",
+    "create": "Создать источник",
+    "manual": "Ручной ввод",
+    "webhook": "Webhook",
+    "publicForm": "Публичная форма",
+    "webhookKey": "Секретный ключ",
+    "regenerate": "Регенерировать",
+    "embedCode": "Код для вставки",
+    "copy": "Скопировать"
+  },
+  "customFields": {
+    "title": "Кастомные поля",
+    "create": "Создать поле",
+    "name": "Название поля",
+    "type": "Тип",
+    "types": {
+      "text": "Текст",
+      "number": "Число",
+      "date": "Дата",
+      "time": "Время",
+      "select_one": "Один выбор",
+      "select_many": "Несколько выборов",
+      "boolean": "Да/Нет"
+    }
+  },
+  "analytics": {
+    "title": "Аналитика",
+    "dashboard": "Дашборд",
+    "funnel": "Воронка",
+    "sources": "Источники",
+    "managers": "Менеджеры",
+    "dynamics": "Динамика",
+    "totalLeads": "Всего лидов",
+    "conversion": "Конверсия",
+    "openLeads": "Открытые лиды",
+    "leadsBySource": "Лиды по источникам"
+  },
+  "users": {
+    "title": "Пользователи",
+    "create": "Добавить пользователя",
+    "name": "Имя",
+    "email": "Email",
+    "role": "Роль",
+    "roles": {
+      "admin": "Администратор",
+      "director": "Руководитель",
+      "sales_manager": "Менеджер",
+      "consultant": "Консультант"
+    }
+  },
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "confirm": "Подтвердить",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "reset": "Сбросить",
+    "noData": "Нет данных"
+  }
+}
