@@ -99,7 +99,7 @@ def to_model(source: Source) -> SourceModel:
         updated_at=source.updated_at,
     )
 
-def to_entity(source:SourceModel)->Source:
+def to_entity(source: SourceModel) -> Source:
     source_type = SourceType(source.source_type)
     return Source(
         id=source.id,
