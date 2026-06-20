@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Boolean, CheckConstraint, Index, text, ForeignKey
-from sqlalchemy.dialects.postgresql.base import UUID
+from uuid import UUID
 
 from src.backend.infrastructure.db.sqlalchemy.core.mixins import TimeStampMixin, UUIDMixin
 from src.backend.infrastructure.db.sqlalchemy.core.models import Base

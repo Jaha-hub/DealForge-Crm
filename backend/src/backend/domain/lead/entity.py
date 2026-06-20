@@ -188,7 +188,7 @@ class Lead(BaseEntity,TimeActionMixin):
     source_id: UUID
     stage_id: UUID
     is_delete: bool = field(default=False)
-    assign_to: UUID | None = None
+    assigned_to: UUID | None = None
     funnel_id: UUID | None = None
     custom_values: list[LeadCustomFieldValue] = field(default_factory=list)
 
@@ -211,6 +211,43 @@ class Lead(BaseEntity,TimeActionMixin):
 
         self.touch()
 
+    @classmethod
+    def create(
+            cls,
+            name: str,
+            contact: Contact,
+            source_id: UUID,
+            stage_id: UUID,
+            assigned_to: UUID | None = None,
+            funnel_id: UUID | None = None,
+    ):
+        return cls(
+            name=LeadName(name),
+            contact=contact,
+            source_id=source_id,
+            stage_id=stage_id,
+            assigned_to=assigned_to,
+            funnel_id=funnel_id,
+        )
+
+
+
+    def move(self, stage_id: UUID):
+        self.stage_id = stage_id
+        self.touch()
+
+    def assing_to(self, assigned_to: UUID):
+        self.assigned_to = assigned_to
+        self.touch()
+
+    def update(
+            self,
+            name:str,
+            contact: Contact,
+    ):
+        self.name = LeadName(name)
+        self.contact = contact
+        self.touch()
     def _add_multi_value(
             self,
             custom_field_id: UUID,

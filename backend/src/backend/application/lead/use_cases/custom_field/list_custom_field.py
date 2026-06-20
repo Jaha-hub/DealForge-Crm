@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import List
 
 from src.backend.application.lead.dtos.custom_fields.list_custom_field import ListCustomFieldCommand
-from src.backend.application.lead.dtos.custom_fields.get_custom_field import CustomFieldResult
 from src.backend.application.lead.dtos.custom_fields.views import CustomFieldViewDTO
 from src.backend.application.lead.prejections.custom_field_view import to_view
 from src.backend.application.shared.interfaces.uow import UnitOfWork

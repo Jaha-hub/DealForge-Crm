@@ -15,5 +15,5 @@ class ListSourceCommand(BaseModel):
     type: SourceType | None = None
     is_active: bool | None = None
     q: str | None = None
-    sort: ListSourceSort
-    pagination: PageRequest
+    sort: ListSourceSort = ListSourceSort.created_at_asc
+    pagination: PageRequest = PageRequest(page=1,size=100)

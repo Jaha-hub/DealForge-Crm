@@ -48,7 +48,7 @@ class FunnelStage(BaseEntity, TimeActionMixin):
     funnel_id: UUID
     name: Name
     win_probability: WinProbability  # 0-100
-    hex_code: HexCode = field(default_factory=lambda: HexCode("#6366F1"))
+    hex: HexCode = field(default_factory=lambda: HexCode("#6366F1"))
     order: int = field(default=0)
     is_archived: bool = field(default=False)
     kind: StageKind = field(default=StageKind.initial)
@@ -59,14 +59,14 @@ class FunnelStage(BaseEntity, TimeActionMixin):
             funnel_id: UUID,
             name: str,
             win_probability: int,
-            hex_code: str,
+            hex: str,
             order: int = 0
     ):
         return cls(
             funnel_id=funnel_id,
             name=Name(name),
             win_probability=WinProbability(win_probability),
-            hex_code=HexCode(hex_code),
+            hex=HexCode(hex),
             order=order
         )
 

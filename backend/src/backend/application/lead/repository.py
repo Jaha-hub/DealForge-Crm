@@ -1,7 +1,8 @@
 from typing import Protocol
 from uuid import UUID
 
-from src.backend.domain.lead.entity import LeadCustomField
+from src.backend.application.shared.interfaces.uow import UnitOfWork
+from src.backend.domain.lead.entity import LeadCustomField, Lead
 from src.backend.domain.lead.value_objects.field_type.value_object import FieldType
 
 
@@ -35,3 +36,20 @@ class LeadCustomFieldRepository(Protocol):
             self,
             enum_id: UUID,
     ) -> int: ...
+
+
+class LeadRepository(Protocol):
+    async def add(self, lead : Lead)-> Lead: ...
+
+    async def get_duplicates(
+            self,
+            phone: str | None = None,
+            email: str | None = None,
+            telegram: str | None = None,
+    )-> list[Lead]: ...
+
+    async def update(self, lead: Lead) -> None: ...
+
+    async def get_by_id(self, lead_id: UUID) -> Lead | None: ...
+
+    async def is_deleted(self):...
